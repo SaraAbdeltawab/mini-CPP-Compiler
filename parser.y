@@ -8,16 +8,24 @@
 %}
 
 %union {
-    int   iValue;                 /* integer value */	
-    long  lValue; 
-    float fValue;
-    char* sValue;
-    char  cValue;
-    bool  bValue;
-    char  sIndex;                /* symbol table index */
+    int   iValue;               /* integer value */	
+    long  lValue;               /* long value */
+    float fValue;               /* float value */
+    char* sValue;               /* string value */
+    char  cValue;               /* char value */
+    bool  bValue;               /* bool value */
+    char  sIndex;               /* symbol table index */
 };
 
-%token INTEGER VARIABLE FLOAT CHAR STRING VAL_TRUE VAL_FALSE                    // Data
+// Data
+%token <iValue> INTEGER
+%token <fValue> FLOAT
+%token <lValue> LONG
+%token <cValue> CHAR
+%token <sValue> STRING
+%token <bValue> VAL_TRUE
+%token <bValue> VAL_FALSE                    
+%token <sIndex> VARIABLE
 %token TYPE_INT TYPE_LONG TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
 %token IF ELSE WHILE FOR SWITCH CASE DEFAULT DO BREAK REPEAT UNTIL PRINT        // Keywords
 
