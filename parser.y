@@ -7,6 +7,16 @@
     int sym[26];
 %}
 
+%union {
+    int   iValue;                 /* integer value */	
+    long  lValue; 
+    float fValue;
+    char* sValue;
+    char  cValue;
+    bool  bValue;
+    char  sIndex;                /* symbol table index */
+};
+
 %token INTEGER VARIABLE FLOAT CHAR STRING VAL_TRUE VAL_FALSE                    // Data
 %token TYPE_INT TYPE_LONG TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
 %token IF ELSE WHILE FOR SWITCH CASE DEFAULT DO BREAK REPEAT UNTIL PRINT        // Keywords
