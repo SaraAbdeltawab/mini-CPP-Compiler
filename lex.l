@@ -86,7 +86,7 @@ smallletter      {
 
 
 
-\"           { BEGIN STRING; s = buf; }
+\"           { BEGIN STR; s = buf; }
 <STR>\\n     { *s++ = '\n'; }
 <STR>\\t     { *s++ = '\t'; }
 <STR>\\\"    { *s++ = '\"'; }
