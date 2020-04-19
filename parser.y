@@ -23,6 +23,15 @@
 %%
 
 /* rules */
+program:
+            program expr '\n'       { printf("%d\n", $2); }
+
+// stmt :
+//         ';'
+//         | expr ';'
+//         | VARIABLE '=' expr ';'
+//         | 
+
 expr :     
             INTEGER
         |   FLOAT                   
