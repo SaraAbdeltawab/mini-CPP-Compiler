@@ -13,6 +13,7 @@
     nodeType *conBool(bool value);
     nodeType *conChar(char value);
     nodeType *conString(char value);
+    void freeNode(nodeType *p);
     void yyerror(char *);
     int yylex(void);
 
@@ -65,29 +66,29 @@ program:
 //         | 
 
 expr:     
-            INTEGER
-        |   FLOAT                   
-        |   CHAR                    
-        |   STRING                  
-        |   VAL_TRUE                
-        |   VAL_FALSE               
-        |   VARIABLE                { $$ = sym[$1] }
-        |   '-' expr %prec UNIMUS   { $$ = $2 }
-        |   expr '+' expr           { $$ = $1 + $3 }
-        |   expr '-' expr           { $$ = $1 - $3 }
-        |   expr '*' expr           { $$ = $1 * $3 }
-        |   expr '/' expr           { $$ = $1 / $3 }
-        |   expr '%' expr           { $$ = $1 % $3 }
-        |   expr AND expr           { $$ = $1 && $3 }
-        |   expr OR expr            { $$ = $1 || $3 }
-        |   '!' expr                { $$ = ! $2 }
-        |   expr '>' expr           { $$ = $1 > $2 }
-        |   expr '<' expr           { $$ = $1 < $2 }
-        |   expr LE expr            { $$ = $1 <= $2 }
-        |   expr GE expr            { $$ = $1 >= $2 }
-        |   expr EQ expr            { $$ = $1 == $2 }
-        |   expr NE expr            { $$ = $1 !=  $2 }
-        |   '(' expr ')'            { $$ = $2 }       
+            INTEGER                 { $$ = conInt($1); }
+        |   FLOAT                   { $$ = conFloat($1); }
+        |   CHAR                    { $$ = conChar($1); }
+        |   STRING                  { $$ = conString($1); }
+        |   VAL_TRUE                { $$ = conBool($1); }
+        |   VAL_FALSE               { $$ = conBool($1); }
+        |   VARIABLE                { $$ = id($1); }
+        |   '-' expr %prec UNIMUS   { $$ = opr(UMINUS, 1, $2); }
+        |   expr '+' expr           { $$ = opr('+', 2, $1, $3); }
+        |   expr '-' expr           { $$ = opr('-', 2, $1, $3); }
+        |   expr '*' expr           { $$ = opr('*', 2, $1, $3); }
+        |   expr '/' expr           { $$ = opr('/', 2, $1, $3); }
+        |   expr '%' expr           { $$ = opr('%', 2, $1, $3); }
+        |   expr AND expr           { $$ = opr(AND, 2, $1, $3); }
+        |   expr OR expr            { $$ = opr(OR, 2, $1, $3); }
+        |   '!' expr                { $$ = opr('!', 1, $2); }
+        |   expr '>' expr           { $$ = opr('>', 2, $1, $3); }
+        |   expr '<' expr           { $$ = opr('<', 2, $1, $3); }
+        |   expr LE expr            { $$ = opr(LE, 2, $1, $3); }
+        |   expr GE expr            { $$ = opr(GE, 2, $1, $3) }
+        |   expr EQ expr            { $$ = opr(EQ, 2, $1, $3); }
+        |   expr NE expr            { $$ = opr(NE, 2, $1, $3); }
+        |   '(' expr ')'            { $$ = $2; }       
         ;
 %% 
 
@@ -180,6 +181,17 @@ nodeType *opr(int oper, int nops, ...) {
         p->opr.op[i] = va_arg(ap, nodeType*); //why is the type ptrs //modify
     va_end(ap);
     return p;
+}
+
+void freeNode(nodeType *p) {
+    int i;
+
+    if (!p) return;
+    if (p->type == typeOpr) {
+        for (i = 0; i < p->opr.nops; i++)
+            freeNode(p->opr.op[i]);
+    }
+    free (p);
 }
 
 void yyerror(char *s) {

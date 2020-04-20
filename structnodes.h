@@ -11,7 +11,6 @@ typedef struct {
         bool  bValue;               /* bool value */
     };
                     
-
 } conNodeType; 
 
 /* identifiers */

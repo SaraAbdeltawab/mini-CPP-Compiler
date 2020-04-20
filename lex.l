@@ -49,8 +49,15 @@ char *s;
 "const"   		return TYPE_CONST;
 "exit"			return EXIT;
 
-"True"          return VAL_TRUE; 
-"FALSE"         return VAL_FALSE;
+"true"          {
+                    yylval.bValue = true;
+                    return VAL_TRUE; 
+                }
+
+"false"         {
+                    yylval.bValue = false;
+                    return VAL_FALSE;
+                }
 
 smallletter      { 
                     yylval.sIndex = *yytext - 'a';
