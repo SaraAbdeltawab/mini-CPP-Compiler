@@ -1,6 +1,7 @@
 /* definitions */
 %{
     #include <stdio.h>
+    #include <stdarg.h>
     void yyerror(char *);
     int yylex(void);
 
