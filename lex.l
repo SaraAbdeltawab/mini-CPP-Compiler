@@ -63,12 +63,12 @@ smallletter      {
                 return INTEGER;
             }
 
--?[1-9]digit* {
+[1-9]digit* {
                 yylval.iValue = atoi(yytext);
                 return INTEGER;
             }
 
--?digit+.digit+ {
+digit+.digit+ {
                     yylval.fValue = atof(yytext);
                     return FLOAT;
               }
