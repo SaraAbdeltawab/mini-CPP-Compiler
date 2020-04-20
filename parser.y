@@ -16,6 +16,7 @@
     char  cValue;               /* char value */
     bool  bValue;               /* bool value */
     char  sIndex;               /* symbol table index */
+    
 };
 
 // Data
@@ -38,20 +39,22 @@
 %left '+' '-'
 %left '*' '/' '%'
 %right '!'
+%nonassoc UNIMUS
+
+%type <bValue> expr
 
 %%
-
-/* rules */
 program:
-            program expr '\n'       { printf("%d\n", $2); }
-
+        program expr '\n'       { printf("%d\n", $2); }
+        ;
+            
 // stmt :
 //         ';'
 //         | expr ';'
 //         | VARIABLE '=' expr ';'
 //         | 
 
-expr :     
+expr:     
             INTEGER
         |   FLOAT                   
         |   CHAR                    
@@ -59,6 +62,7 @@ expr :
         |   VAL_TRUE                
         |   VAL_FALSE               
         |   VARIABLE                { $$ = sym[$1] }
+        |   '-' expr %prec UNIMUS   { $$ = $2 }
         |   expr '+' expr           { $$ = $1 + $3 }
         |   expr '-' expr           { $$ = $1 - $3 }
         |   expr '*' expr           { $$ = $1 * $3 }
