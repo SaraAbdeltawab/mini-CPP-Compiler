@@ -42,7 +42,6 @@ char *s;
 
 
 "int"			return TYPE_INT;
-"long"          return TYPE_LONG;
 "float"			return TYPE_FLT;
 "string"  		return TYPE_STR;
 "char"			return TYPE_CHR;

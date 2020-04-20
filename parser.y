@@ -2,6 +2,17 @@
 %{
     #include <stdio.h>
     #include <stdarg.h>
+    #include "structnodes.h"
+
+    /* prototypes */
+    nodeType *opr(int oper, int nops, ...);
+    nodeType *id(int i);
+    nodeType *con();
+    nodeType *conInt(int value);
+    nodeType *conFloat(float value);
+    nodeType *conBool(bool value);
+    nodeType *conChar(char value);
+    nodeType *conString(char value);
     void yyerror(char *);
     int yylex(void);
 
@@ -10,25 +21,24 @@
 
 %union {
     int   iValue;               /* integer value */	
-    long  lValue;               /* long value */
     float fValue;               /* float value */
     char* sValue;               /* string value */
     char  cValue;               /* char value */
     bool  bValue;               /* bool value */
     char  sIndex;               /* symbol table index */
+    nodeType *nPtr;             /* node pointer */
     
 };
 
 // Data
 %token <iValue> INTEGER
 %token <fValue> FLOAT
-%token <lValue> LONG
 %token <cValue> CHAR
 %token <sValue> STRING
 %token <bValue> VAL_TRUE
 %token <bValue> VAL_FALSE                    
 %token <sIndex> VARIABLE
-%token TYPE_INT TYPE_LONG TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
+%token TYPE_INT TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
 %token IF ELSE WHILE FOR SWITCH CASE DEFAULT DO BREAK REPEAT UNTIL PRINT        // Keywords
 
 %right '='
@@ -41,7 +51,7 @@
 %right '!'
 %nonassoc UNIMUS
 
-%type <bValue> expr
+%type <nPtr> expr
 
 %%
 program:
@@ -82,6 +92,95 @@ expr:
 %% 
 
 /* routines */
+
+nodeType *con(){
+    nodeType *p;
+
+    /* allocate node */
+    if ((p = malloc(sizeof(nodeType))) == NULL)
+        yyerror("out of memory");
+
+    /* copy information */
+    p->type = typeCon;
+
+    return p;
+}
+
+nodeType *conInt(int value) {
+   nodeType *p = con();
+    
+    p->con.iValue = value;
+
+    return p;
+}
+
+nodeType *conFloat(float value) {
+    nodeType *p = con();
+
+    p->con.fValue = value;
+
+    return p;
+}
+
+nodeType *conBool(bool value) {
+    nodeType *p = con();
+
+    p->con.bValue = value;
+
+    return p;
+}
+
+
+nodeType *conChar(char value) {
+    nodeType *p = con();
+
+    p->con.cValue = value;
+
+    return p;
+}
+
+nodeType *conString(char* value) {
+    nodeType *p = con();
+
+    p->con.sValue = value; /* make sure that we don't need to copy it first //modify */
+
+    return p;
+}
+
+
+nodeType *id(int i) {
+    nodeType *p;
+
+    /* allocate node */
+    if ((p = malloc(sizeof(nodeType))) == NULL)
+        yyerror("out of memory");
+
+    /* copy information */
+    p->type = typeId;
+    p->id.i = i;
+
+    return p;
+}
+
+nodeType *opr(int oper, int nops, ...) {
+    va_list ap;
+    nodeType *p;
+    int i;
+
+    /* allocate node, extending op array */
+    if ((p = malloc(sizeof(nodeType) + (nops-1) * sizeof(nodeType *))) == NULL)
+        yyerror("out of memory");
+
+    /* copy information */
+    p->type = typeOpr;
+    p->opr.oper = oper;
+    p->opr.nops = nops;
+    va_start(ap, nops);
+    for (i = 0; i < nops; i++)
+        p->opr.op[i] = va_arg(ap, nodeType*); //why is the type ptrs //modify
+    va_end(ap);
+    return p;
+}
 
 void yyerror(char *s) {
     fprintf(stdout, "%s\n", s);
