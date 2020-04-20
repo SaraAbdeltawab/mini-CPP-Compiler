@@ -2,6 +2,7 @@
 %{
     #include <stdio.h>
     #include <stdarg.h>
+    #include <stdlib.h>
     #include "structnodes.h"
 
     /* prototypes */
@@ -12,7 +13,7 @@
     nodeType *conFloat(float value);
     nodeType *conBool(bool value);
     nodeType *conChar(char value);
-    nodeType *conString(char value);
+    nodeType *conString(char* value);
     void freeNode(nodeType *p);
     void yyerror(char *);
     int yylex(void);
@@ -50,13 +51,14 @@
 %left '+' '-'
 %left '*' '/' '%'
 %right '!'
-%nonassoc UNIMUS
+%nonassoc UMINUS
 
 %type <nPtr> expr
 
 %%
 program:
-        program expr '\n'       { printf("%d\n", $2); }
+        program expr '\n'       { printf("%d\n", $2); exit(0); }
+        | /* NULL */            
         ;
             
 // stmt :
@@ -73,7 +75,7 @@ expr:
         |   VAL_TRUE                { $$ = conBool($1); }
         |   VAL_FALSE               { $$ = conBool($1); }
         |   VARIABLE                { $$ = id($1); }
-        |   '-' expr %prec UNIMUS   { $$ = opr(UMINUS, 1, $2); }
+        |   '-' expr %prec UMINUS   { $$ = opr(UMINUS, 1, $2); }
         |   expr '+' expr           { $$ = opr('+', 2, $1, $3); }
         |   expr '-' expr           { $$ = opr('-', 2, $1, $3); }
         |   expr '*' expr           { $$ = opr('*', 2, $1, $3); }
@@ -85,7 +87,7 @@ expr:
         |   expr '>' expr           { $$ = opr('>', 2, $1, $3); }
         |   expr '<' expr           { $$ = opr('<', 2, $1, $3); }
         |   expr LE expr            { $$ = opr(LE, 2, $1, $3); }
-        |   expr GE expr            { $$ = opr(GE, 2, $1, $3) }
+        |   expr GE expr            { $$ = opr(GE, 2, $1, $3); }
         |   expr EQ expr            { $$ = opr(EQ, 2, $1, $3); }
         |   expr NE expr            { $$ = opr(NE, 2, $1, $3); }
         |   '(' expr ')'            { $$ = $2; }       
