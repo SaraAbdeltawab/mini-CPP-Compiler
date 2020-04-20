@@ -5,6 +5,8 @@ smallletter [a-z]
 %{
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include "structnodes.h"
 #include "y.tab.h"
 
 #define MAX_STRING_SZ 100
@@ -37,8 +39,7 @@ char *s;
 "!="		return NE;
 ">="		return GE;
 "<="		return LE;
-"++"		return INC;
-"--"		return DEC;
+
 
 
 "int"			return TYPE_INT;
@@ -59,7 +60,23 @@ char *s;
                     return VAL_FALSE;
                 }
 
-smallletter      { 
+
+\"           { BEGIN STR; s = buf; }
+<STR>\\n     { *s++ = '\n'; }
+<STR>\\t     { *s++ = '\t'; }
+<STR>\\\"    { *s++ = '\"'; }
+<STR>\"      {
+                    *s = '\0';
+                    yylval.sValue = malloc(strlen(buf));
+                    strcpy(yylval.sValue, buf); 
+                    BEGIN INITIAL;
+                    //printf("found '%s'\n", buf);
+                    return STRING;
+                }
+<STR>\n      { printf("unterminated string constant"); exit(1); }
+<STR>.       { *s++ = *yytext; }
+
+{smallletter}     { 
                     yylval.sIndex = *yytext - 'a';
                     return VARIABLE;
                 }
@@ -69,17 +86,17 @@ smallletter      {
                 return INTEGER;
             }
 
-[1-9]digit* {
+[1-9]{digit}* {
                 yylval.iValue = atoi(yytext);
                 return INTEGER;
             }
 
-digit+.digit+ {
+{digit}+.{digit}+ {
                     yylval.fValue = atof(yytext);
                     return FLOAT;
               }
 
-\"letter\"      {
+\"{letter}\"      {
                     yylval.cValue = *yytext;
                     return CHAR;
                 }
@@ -91,40 +108,14 @@ digit+.digit+ {
                 }
 
 
-
-\"           { BEGIN STR; s = buf; }
-<STR>\\n     { *s++ = '\n'; }
-<STR>\\t     { *s++ = '\t'; }
-<STR>\\\"    { *s++ = '\"'; }
-<STR>\"      {
-                    *s = '\0';
-                    yylval.sValue = malloc(strlen(buf))
-                    strcpy(yylval.sValue, buf); 
-                    BEGIN INITIAL;
-                    //printf("found '%s'\n", buf);
-                    return STRING;
-                }
-<STR>\n      { printf("unterminated string constant"); exit(1); }
-<STR>.       { *s++ = *yytext; }
-
-
 [ \t\n]+        ;       /* ignore whitespace */
 
 .              {
-                    yyerror("Unknown character");
-                    exit(1);
-
+                   yyerror("Unknown character");
                 } 
 %%
-
-
-
 
 int yywrap(void) {
     return 1;
 }
 
-int main(void) {
-    yylex();
-    return 0;
-}
