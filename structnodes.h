@@ -1,9 +1,12 @@
 #include <stdbool.h>
 
 typedef enum { typeCon, typeId, typeOpr } nodeEnum;
+typedef enum { typeInt, typeFloat, typeString, typeChar, typeBool } conEnum;
 
 /* constants */
 typedef struct {
+    conEnum type;              /* type of con */
+
     /* value of constant */
     union {
         int iValue;                 /* integer value */	
@@ -17,7 +20,7 @@ typedef struct {
 
 /* identifiers */
 typedef struct {
-    int i;                      /* subscript to sym array */
+    int idx;                      /* subscript to sym array */
 } idNodeType;
 
 /* operators */

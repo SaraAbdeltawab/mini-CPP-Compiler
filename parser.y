@@ -142,6 +142,7 @@ nodeType *con(){
 nodeType *conInt(int value) {
    nodeType *p = con();
     
+    p->con.type = typeInt;
     p->con.iValue = value;
 
     return p;
@@ -150,6 +151,7 @@ nodeType *conInt(int value) {
 nodeType *conFloat(float value) {
     nodeType *p = con();
 
+    p->con.type = typeFloat;
     p->con.fValue = value;
 
     return p;
@@ -158,6 +160,7 @@ nodeType *conFloat(float value) {
 nodeType *conBool(bool value) {
     nodeType *p = con();
 
+    p->con.type = typeBool;
     p->con.bValue = value;
 
     return p;
@@ -167,6 +170,7 @@ nodeType *conBool(bool value) {
 nodeType *conChar(char value) {
     nodeType *p = con();
 
+    p->con.type = typeChar;
     p->con.cValue = value;
 
     return p;
@@ -175,6 +179,7 @@ nodeType *conChar(char value) {
 nodeType *conString(char* value) {
     nodeType *p = con();
 
+    p->con.type = typeString;
     p->con.sValue = value; /* make sure that we don't need to copy it first //modify */
 
     return p;
@@ -190,7 +195,7 @@ nodeType *id(int i) {
 
     /* copy information */
     p->type = typeId;
-    p->id.i = i;
+    p->id.idx = i;
 
     return p;
 }
