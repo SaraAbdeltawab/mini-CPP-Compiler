@@ -41,7 +41,10 @@
 %token <bValue> VAL_FALSE                    
 %token <sIndex> VARIABLE
 %token TYPE_INT TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
-%token IF ELSE WHILE FOR SWITCH CASE DEFAULT DO BREAK REPEAT UNTIL PRINT        // Keywords
+%token IF ELSE WHILE FOR SWITCH CASE DEFAULT BREAK REPEAT UNTIL PRINT        // Keywords
+
+%nonassoc IFX
+%nonassoc ELSE
 
 %right '='
 %left OR
@@ -53,20 +56,39 @@
 %right '!'
 %nonassoc UMINUS
 
-%type <nPtr> expr
+%type <nPtr> stmt expr stmt_list
 
 %%
 program:
         program expr '\n'       { printf("%d\n", $2); exit(0); }
         | /* NULL */            
         ;
-            
-// stmt :
-//         ';'
-//         | expr ';'
-//         | VARIABLE '=' expr ';'
-//         | 
 
+stmt:
+        ';'
+        | expr ';'                                      {  }
+        | VARIABLE '=' expr ';'                         {  }
+        | PRINT expr ';'                                {  }
+        | BREAK ';'                                     {  }
+        | SWITCH '(' VARIABLE ')' stmt                  {  }
+        | DEFAULT ':' stmt                              {  }
+        | CASE INTEGER ':' stmt                         {  }
+        | CASE CHAR ':' stmt                            {  }
+        | CASE VAL_FALSE ':' stmt                       {  }
+        | CASE VAL_TRUE ':' stmt                        {  }
+        | IF '(' expr ')' stmt %prec IFX                {  }
+        | IF '(' expr ')' stmt ELSE stmt                {  }
+        | FOR '(' expr ';' expr ';' expr ')' stmt       {  }
+        | REPEAT '{' stmt '}' UNTIL '(' expr ')' ';'    {  }
+        | WHILE '(' expr ')' stmt                       {  }
+        | '{' stmt_list '}'                             {  }
+        ;
+
+stmt_list:
+            stmt                    {  }
+        |   stmt_list stmt          {  }
+        ;
+        
 expr:     
             INTEGER                 { $$ = conInt($1); }
         |   FLOAT                   { $$ = conFloat($1); }
