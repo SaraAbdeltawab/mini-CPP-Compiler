@@ -43,6 +43,9 @@
 %token TYPE_INT TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
 %token IF ELSE WHILE FOR SWITCH CASE DEFAULT BREAK REPEAT UNTIL PRINT        // Keywords
 
+%nonassoc IFX
+%nonassoc ELSE
+
 %right '='
 %left OR
 %left AND
@@ -53,7 +56,7 @@
 %right '!'
 %nonassoc UMINUS
 
-%type <nPtr> expr
+%type <nPtr> stmt expr stmt_list
 
 %%
 program:
@@ -63,22 +66,29 @@ program:
 
 stmt:
         ';'
-        | expr ';'
-        | VARIABLE '=' expr ';'
-        | PRINT expr ';'
-        | BREAK ';'
-        | DEFAULT ';'
-        | SWITCH '(' VARIABLE ')' '{' stmt '}'
-        | CASE INTEGER ':'
-        | CASE CHAR ':'
-        | CASE VAL_FALSE ':'
-        | CASE VAL_TRUE ':'
-        | IF '(' expr ')' '{' stmt '}' 
-        | FOR '(' expr ';' expr ';' expr ')' '{' stmt '}'
-        | REPEAT '{' stmt '}' UNTIL '(' expr ')' ';'
-        | WHILE '(' expr ')' '{' stmt '}'
+        | expr ';'                                      {  }
+        | VARIABLE '=' expr ';'                         {  }
+        | PRINT expr ';'                                {  }
+        | BREAK ';'                                     {  }
+        | SWITCH '(' VARIABLE ')' stmt                  {  }
+        | DEFAULT ':' stmt                              {  }
+        | CASE INTEGER ':' stmt                         {  }
+        | CASE CHAR ':' stmt                            {  }
+        | CASE VAL_FALSE ':' stmt                       {  }
+        | CASE VAL_TRUE ':' stmt                        {  }
+        | IF '(' expr ')' stmt %prec IFX                {  }
+        | IF '(' expr ')' stmt ELSE stmt                {  }
+        | FOR '(' expr ';' expr ';' expr ')' stmt       {  }
+        | REPEAT '{' stmt '}' UNTIL '(' expr ')' ';'    {  }
+        | WHILE '(' expr ')' stmt                       {  }
+        | '{' stmt_list '}'                             {  }
         ;
 
+stmt_list:
+            stmt                    {  }
+        |   stmt_list stmt          {  }
+        ;
+        
 expr:     
             INTEGER                 { $$ = conInt($1); }
         |   FLOAT                   { $$ = conFloat($1); }
