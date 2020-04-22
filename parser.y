@@ -207,7 +207,7 @@ nodeType *opr(int oper, int nops, ...) {
     p->opr.nops = nops;
     va_start(ap, nops);
     for (i = 0; i < nops; i++)
-        p->opr.op[i] = va_arg(ap, nodeType*); //why is the type ptrs //modify
+        p->opr.op[i] = va_arg(ap, nodeType*);
     va_end(ap);
     return p;
 }
