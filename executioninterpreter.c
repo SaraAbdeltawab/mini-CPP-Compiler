@@ -3,7 +3,8 @@
 #include "y.tab.h"
 
 //pass the value of switch variable 
-int ex(nodeType *p) {
+// types of variables
+int ex(nodeType *p, int switchval) {
     if (!p) return 0;
     switch(p->type) {
     case typeCon:       
@@ -47,12 +48,12 @@ int ex(nodeType *p) {
 		                    ex(p->opr.op[0]);
                         }while (ex(p->opr.op[1]));
                     
-        case SWITCH:    ex(p->opr.op[1], ex(sym[p->opr.op[0]->id.idx]));
+        //case SWITCH:    ex(p->opr.op[1], ex(sym[p->opr.op[0]->id.idx]));
 
-        case CASE:      if(p->opr.op[0] != NULL) ex([p->opr.op[0]);
-                        if(switchval == ex(p->opr.op[1])  return ex(sym[p->opr.op[2]); //add indication of done; //modify
+        //case CASE:      if(p->opr.op[0] != NULL) ex([p->opr.op[0]);
+                        //if(switchval == ex(p->opr.op[1])  return ex(sym[p->opr.op[2]); //add indication of done; //modify
         
-        case DEFAULT:   if() ex([p->opr.op[1]); //!indication of done
+        //case DEFAULT:   if() ex([p->opr.op[1]); //!indication of done
 
         }
     }

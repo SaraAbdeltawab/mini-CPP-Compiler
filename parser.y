@@ -56,7 +56,7 @@
 %right '!'
 %nonassoc UMINUS
 
-%type <nPtr> stmt expr stmt_list
+%type <nPtr> stmt expr stmt_list case_default case_list stmt_list 
 
 %%
 program:
@@ -76,19 +76,19 @@ stmt:
         | FOR '(' VARIABLE '=' expr ';' expr ';' VARIABLE '=' expr ')' stmt     { $$ = opr(FOR,6,id($3),$5,$7,id($9),$11,$13) }
         | REPEAT stmt  UNTIL '(' expr ')' ';'                                   { $$ = opr(REPEAT,2,$2,$5); }
         | WHILE '(' expr ')' stmt                                               { $$ = opr(WHILE,2,$3,$5); }
-        | '{' stmt_list '}'                                                     { $$ = $2 }
+        | '{' stmt_list '}'                                                     { $$ = $2; }
         ;
 
 case_default:
-            DEFAULT ':' stmt_list                                               { $$ = opr(DEFAULT,1,$3) }
+            DEFAULT ':' stmt_list                                               { $$ = opr(DEFAULT,1,$3); }
         |
         ;
 
 case_list:
-            case_list CASE INTEGER ':' stmt_list                                { $$ = opr(CASE,1,$3)  }
-        |   case_list CASE CHAR ':' stmt_list                                   { $$ = opr(CASE,1,$3)  }
-        |   case_list CASE VAL_FALSE ':' stmt_list                              { $$ = opr(CASE,1,$3)  }
-        |   case_list CASE VAL_TRUE ':' stmt_list                               { $$ = opr(CASE,1,$3)  }
+            case_list CASE INTEGER ':' stmt_list                                { $$ = opr(CASE,3,$1,conInt($3),$5); }
+        |   case_list CASE CHAR ':' stmt_list                                   { $$ = opr(CASE,3,$1,conChar($3),$5); }
+        |   case_list CASE VAL_FALSE ':' stmt_list                              { $$ = opr(CASE,3,$1,conBool($3),$5);  }
+        |   case_list CASE VAL_TRUE ':' stmt_list                               { $$ = opr(CASE,3,$1,conBool($3),$5); }
         |   
         ;
 
