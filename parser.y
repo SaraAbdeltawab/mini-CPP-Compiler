@@ -65,28 +65,36 @@ program:
         ;
 
 stmt:
-        ';'
-        | expr ';'                                      {  }
-        | VARIABLE '=' expr ';'                         {  }
-        | PRINT expr ';'                                {  }
-        | BREAK ';'                                     {  }
-        | SWITCH '(' VARIABLE ')' stmt                  {  }
-        | DEFAULT ':' stmt                              {  }
-        | CASE INTEGER ':' stmt                         {  }
-        | CASE CHAR ':' stmt                            {  }
-        | CASE VAL_FALSE ':' stmt                       {  }
-        | CASE VAL_TRUE ':' stmt                        {  }
-        | IF '(' expr ')' stmt %prec IFX                {  }
-        | IF '(' expr ')' stmt ELSE stmt                {  }
-        | FOR '(' expr ';' expr ';' expr ')' stmt       {  }
-        | REPEAT '{' stmt '}' UNTIL '(' expr ')' ';'    {  }
-        | WHILE '(' expr ')' stmt                       {  }
-        | '{' stmt_list '}'                             {  }
+        ';'                                                                     { $$ = opr(';', 2, NULL, NULL); }
+        | expr ';'                                                              { $$ = $1; }
+        | VARIABLE '=' expr ';'                                                 { $$ = opr('=',2,id($1),$3); }
+        | PRINT expr ';'                                                        { $$ = opr(PRINT,1,$2); }
+        | BREAK ';'                                                             { $$ = opr(BREAK,0); }
+        | SWITCH '(' VARIABLE ')' case_list case_default                        { $$ = opr(SWITCH,3,id($3),$5,$6); }
+        | IF '(' expr ')' stmt %prec IFX                                        { $$ = opr(IF,2,$3,$5); }
+        | IF '(' expr ')' stmt ELSE stmt                                        { $$ = opr(IF,3,$3,$5,$7); }
+        | FOR '(' VARIABLE '=' expr ';' expr ';' VARIABLE '=' expr ')' stmt     { $$ = opr(FOR,6,id($3),$5,$7,id($9),$11,$13) }
+        | REPEAT stmt  UNTIL '(' expr ')' ';'                                   { $$ = opr(REPEAT,2,$2,$5); }
+        | WHILE '(' expr ')' stmt                                               { $$ = opr(WHILE,2,$3,$5); }
+        | '{' stmt_list '}'                                                     { $$ = $2 }
+        ;
+
+case_default:
+            DEFAULT ':' stmt_list                                               { $$ = opr(DEFAULT,1,$3) }
+        |
+        ;
+
+case_list:
+            case_list CASE INTEGER ':' stmt_list                                { $$ = opr(CASE,1,$3)  }
+        |   case_list CASE CHAR ':' stmt_list                                   { $$ = opr(CASE,1,$3)  }
+        |   case_list CASE VAL_FALSE ':' stmt_list                              { $$ = opr(CASE,1,$3)  }
+        |   case_list CASE VAL_TRUE ':' stmt_list                               { $$ = opr(CASE,1,$3)  }
+        |   
         ;
 
 stmt_list:
-            stmt                    {  }
-        |   stmt_list stmt          {  }
+            stmt                    { $$ = $1 }
+        |   stmt_list stmt          { $$ = opr(';',2,$1,$2); }
         ;
         
 expr:     
