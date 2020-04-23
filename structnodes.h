@@ -40,4 +40,4 @@ typedef struct nodeTypeTag {
     };
 } nodeType;
 
-//extern int sym[26]; //modify
+extern int sym[26];

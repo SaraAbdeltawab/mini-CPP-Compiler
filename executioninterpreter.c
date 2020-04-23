@@ -4,7 +4,7 @@
 
 //pass the value of switch variable 
 // types of variables
-int ex(nodeType *p, int switchval) {
+int ex(nodeType *p) {
     if (!p) return 0;
     switch(p->type) {
     case typeCon:       
@@ -43,7 +43,7 @@ int ex(nodeType *p, int switchval) {
         case GE:        return ex(p->opr.op[0]) >= ex(p->opr.op[1]);
         case EQ:        return ex(p->opr.op[0]) == ex(p->opr.op[1]);
         case NE:        return ex(p->opr.op[0]) != ex(p->opr.op[1]);
-        case FOR:       for(ex(p->opr.op[0]); ex(p->opr.op[1]); ex(p->opr.op[2])) ex(p->opr.op[3]); return 0;
+        case FOR:       for(sym[p->opr.op[0]->id.idx] = ex(p->opr.op[1]); ex(p->opr.op[2]); sym[p->opr.op[3]->id.idx] = ex(p->opr.op[4])) ex(p->opr.op[5]); return 0;
         case REPEAT:  	do{
 		                    ex(p->opr.op[0]);
                         }while (ex(p->opr.op[1]));
