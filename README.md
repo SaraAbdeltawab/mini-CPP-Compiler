@@ -4,6 +4,6 @@ Design and implementation of a simple programming language using the Lex and Yac
 <ul>
 <li type="1">bison --yacc parser.y -d</li>
 <li type="1">flex lex.l</li>
-<li type="1">gcc y.tab.c lex.yy.c</li>
+<li type="1">gcc y.tab.c lex.yy.c executioninterpreter.c</li>
 <li type="1">run the generated .exe file</li>
 </ul>
