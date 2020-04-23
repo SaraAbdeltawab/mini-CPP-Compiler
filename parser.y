@@ -56,7 +56,7 @@
 %right '!'
 %nonassoc UMINUS
 
-%type <nPtr> stmt expr stmt_list case_default case_list
+%type <nPtr> stmt expr stmt_list  case_list  case_default
 
 %%
 
@@ -71,7 +71,7 @@ stmt:
         | VARIABLE '=' expr ';'                                                 { $$ = opr('=',2,id($1),$3); }
         | PRINT expr ';'                                                        { $$ = opr(PRINT,1,$2); }
         | BREAK ';'                                                             { $$ = opr(BREAK,0); }
-        | SWITCH '(' VARIABLE ')' case_list case_default                        { $$ = opr(SWITCH,3,id($3),$5,$6); }
+        | SWITCH '(' VARIABLE ')' '{' case_list case_default '}'                { $$ = opr(SWITCH,3,id($3),$6,$7); }
         | IF '(' expr ')' stmt %prec IFX                                        { $$ = opr(IF,2,$3,$5); }
         | IF '(' expr ')' stmt ELSE stmt                                        { $$ = opr(IF,3,$3,$5,$7); }
         | FOR '(' VARIABLE '=' expr ';' expr ';' VARIABLE '=' expr ')' stmt     { $$ = opr(FOR,6,id($3),$5,$7,id($9),$11,$13); }

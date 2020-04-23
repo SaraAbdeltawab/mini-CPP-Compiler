@@ -102,9 +102,11 @@ char *s;
 
 
     
-[-!()<>=+*/;{}.] {   //where "." is used?
+[-!()<>=+*/;{}.:] {   //where "." is used?
                    return *yytext;
                 }
+
+
 
 
 [ \t\n]+        ;       /* ignore whitespace */
