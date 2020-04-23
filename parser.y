@@ -56,7 +56,7 @@
 %right '!'
 %nonassoc UMINUS
 
-%type <nPtr> stmt expr stmt_list  case_list  case_default
+%type <nPtr> stmt expr stmt_list case_default case_list  
 
 %%
 
