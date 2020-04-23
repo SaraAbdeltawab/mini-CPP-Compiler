@@ -64,7 +64,7 @@ int ex(nodeType *p) {
 		                    ex(p->opr.op[0]);
                         }while (ex(p->opr.op[1])); return 0; //Is return needed here?//modify
                     
-        case SWITCH:    if(!exSwitch(p->opr.op[1], sym[p->opr.op[0]->id.idx], &casematch)) ex(p->opr.op[2]); return 0;
+        case SWITCH:    if(!exSwitch(p->opr.op[1], sym[p->opr.op[0]->id.idx], &casematch)) ex(p->opr.op[2]); skipflag = 0; return 0;
 
         case DEFAULT:   ex(p->opr.op[0]); return 0;
         
@@ -82,7 +82,6 @@ bool exSwitch(nodeType *p, int switchval, bool* casematch){
         ex(p->opr.op[2]);
     }
     else if(*casematch && !skipflag) ex(p->opr.op[2]);
-    
-    skipflag = 0;
+
     return *casematch;
 }
