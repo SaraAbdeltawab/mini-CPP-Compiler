@@ -8,6 +8,7 @@
     /* prototypes */
     nodeType *opr(int oper, int nops, ...);
     nodeType *id(int i);
+    nodeType *typ(int value);
     nodeType *con();
     nodeType *conInt(int value);
     nodeType *conFloat(float value);
@@ -18,7 +19,7 @@
     void yyerror(char *);
     int yylex(void);
     int ex(nodeType *p);
-    int sym[26];
+    conNodeType sym[26];
 %}
 
 %union {
@@ -56,7 +57,7 @@
 %right '!'
 %nonassoc UMINUS
 
-%type <nPtr> stmt expr stmt_list case_default case_list
+%type <nPtr> stmt expr stmt_list case_default case_list type
 
 %%
 
@@ -66,18 +67,29 @@ program:
         ;
 
 stmt:
-        ';'                                                                     { $$ = opr(';', 2, NULL, NULL); }
-        | expr ';'                                                              { $$ = $1; }
-        | VARIABLE '=' expr ';'                                                 { $$ = opr('=',2,id($1),$3); }
-        | PRINT expr ';'                                                        { $$ = opr(PRINT,1,$2); }
-        | BREAK ';'                                                             { $$ = opr(BREAK,0); }
-        | SWITCH '(' VARIABLE ')' case_list case_default                        { $$ = opr(SWITCH,3,id($3),$5,$6); }
-        | IF '(' expr ')' stmt %prec IFX                                        { $$ = opr(IF,2,$3,$5); }
-        | IF '(' expr ')' stmt ELSE stmt                                        { $$ = opr(IF,3,$3,$5,$7); }
-        | FOR '(' VARIABLE '=' expr ';' expr ';' VARIABLE '=' expr ')' stmt     { $$ = opr(FOR,6,id($3),$5,$7,id($9),$11,$13); }
-        | REPEAT stmt  UNTIL '(' expr ')' ';'                                   { $$ = opr(REPEAT,2,$2,$5); }
-        | WHILE '(' expr ')' stmt                                               { $$ = opr(WHILE,2,$3,$5); }
-        | '{' stmt_list '}'                                                     { $$ = $2; }
+            ';'                                                                   { $$ = opr(';', 2, NULL, NULL); }
+        |   expr ';'                                                              { $$ = $1; }
+        |   type VARIABLE ';'                                                     { $$ = opr('=',2,$1,id($2)); }
+        |   VARIABLE '=' expr ';'                                                 { $$ = opr('=',2,id($1),$3); }
+        |   type VARIABLE '=' expr ';'                                            { $$ = opr('=',3,$1,id($2),$4); }
+        |   TYPE_CONST type VARIABLE '=' expr ';'                                 { $$ = opr('=',4,typ(conVar),$2,id($3),$5); }
+        |   PRINT expr ';'                                                        { $$ = opr(PRINT,1,$2); }
+        |   BREAK ';'                                                             { $$ = opr(BREAK,0); }
+        |   SWITCH '(' VARIABLE ')' case_list case_default                        { $$ = opr(SWITCH,3,id($3),$5,$6); }
+        |   IF '(' expr ')' stmt %prec IFX                                        { $$ = opr(IF,2,$3,$5); }
+        |   IF '(' expr ')' stmt ELSE stmt                                        { $$ = opr(IF,3,$3,$5,$7); }
+        |   FOR '(' VARIABLE '=' expr ';' expr ';' VARIABLE '=' expr ')' stmt     { $$ = opr(FOR,6,id($3),$5,$7,id($9),$11,$13); }
+        |   REPEAT stmt  UNTIL '(' expr ')' ';'                                   { $$ = opr(REPEAT,2,$2,$5); }
+        |   WHILE '(' expr ')' stmt                                               { $$ = opr(WHILE,2,$3,$5); }
+        |   '{' stmt_list '}'                                                     { $$ = $2; }
+        ;
+
+type:
+            TYPE_INT           { $$ =  typ(typeInt); } 
+        |   TYPE_FLT           { $$ =  typ(typeFloat); }
+        |   TYPE_STR           { $$ =  typ(typeString); }
+        |   TYPE_CHR           { $$ =  typ(typeChar); }
+        |   TYPE_BOOL          { $$ =  typ(typeBool); }
         ;
 
 case_default:
@@ -218,6 +230,20 @@ nodeType *opr(int oper, int nops, ...) {
     for (i = 0; i < nops; i++)
         p->opr.op[i] = va_arg(ap, nodeType*);
     va_end(ap);
+    return p;
+}
+
+nodeType *typ(int type){
+    nodeType *p;
+
+    /* allocate node */
+    if ((p = malloc(sizeof(nodeType))) == NULL)
+        yyerror("out of memory");
+
+    /* copy information */
+    p->type = typeDef;
+    p->con.type = type;
+
     return p;
 }
 
