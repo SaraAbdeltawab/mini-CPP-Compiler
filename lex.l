@@ -50,12 +50,12 @@ char *s;
 "exit"			return EXIT;
 
 "true"          {
-                    yylval.bValue = true;
+                    yylval.fValue = true;
                     return VAL_TRUE; 
                 }
 
 "false"         {
-                    yylval.bValue = false;
+                    yylval.fValue = false;
                     return VAL_FALSE;
                 }
 
@@ -81,12 +81,12 @@ char *s;
                 }
 
 0           {
-                yylval.iValue = atoi(yytext);
+                yylval.fValue = atof(yytext);
                 return INTEGER;
             }
 
 [1-9]{digit}* {
-                yylval.iValue = atoi(yytext);
+                yylval.fValue = atof(yytext);
                 return INTEGER;
             }
 
@@ -95,8 +95,8 @@ char *s;
                     return FLOAT;
               }
 
-\"{letter}\"      {
-                    yylval.cValue = *yytext;
+\'{letter}\'      {
+                    yylval.fValue = *(yytext+1);
                     return CHAR;
                 }
 

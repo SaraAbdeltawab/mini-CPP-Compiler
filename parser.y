@@ -19,27 +19,24 @@
     void yyerror(char *);
     int yylex(void);
     int ex(nodeType *p);
-    conNodeType sym[26];
+    struct conNodeType sym[26];
 %}
 
 %union {
-    int   iValue;               /* integer value */	
     float fValue;               /* float value */
     char* sValue;               /* string value */
-    char  cValue;               /* char value */
-    bool  bValue;               /* bool value */
     char  sIndex;               /* symbol table index */
     nodeType *nPtr;             /* node pointer */
     
 };
 
 // Data
-%token <iValue> INTEGER
+%token <fValue> INTEGER
 %token <fValue> FLOAT
-%token <cValue> CHAR
+%token <fValue> CHAR
 %token <sValue> STRING
-%token <bValue> VAL_TRUE
-%token <bValue> VAL_FALSE                    
+%token <fValue> VAL_TRUE
+%token <fValue> VAL_FALSE                    
 %token <sIndex> VARIABLE
 %token TYPE_INT TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
 %token IF ELSE WHILE FOR SWITCH CASE DEFAULT BREAK REPEAT UNTIL PRINT        // Keywords
@@ -69,7 +66,7 @@ program:
 stmt:
             ';'                                                                   { $$ = opr(';', 2, NULL, NULL); }
         |   expr ';'                                                              { $$ = $1; }
-        |   type VARIABLE ';'                                                     { $$ = opr('=',2,$1,id($2)); }
+        |   type VARIABLE ';'                                                     { $$ = opr('_',2,$1,id($2)); }
         |   VARIABLE '=' expr ';'                                                 { $$ = opr('=',2,id($1),$3); }
         |   type VARIABLE '=' expr ';'                                            { $$ = opr('=',3,$1,id($2),$4); }
         |   TYPE_CONST type VARIABLE '=' expr ';'                                 { $$ = opr('=',4,typ(conVar),$2,id($3),$5); }
@@ -156,7 +153,7 @@ nodeType *conInt(int value) {
    nodeType *p = con();
     
     p->con.type = typeInt;
-    p->con.iValue = value;
+    p->con.fValue = value;
 
     return p;
 }
@@ -174,7 +171,7 @@ nodeType *conBool(bool value) {
     nodeType *p = con();
 
     p->con.type = typeBool;
-    p->con.bValue = value;
+    p->con.fValue = value;
 
     return p;
 }
@@ -184,7 +181,7 @@ nodeType *conChar(char value) {
     nodeType *p = con();
 
     p->con.type = typeChar;
-    p->con.cValue = value;
+    p->con.fValue = value;
 
     return p;
 }
