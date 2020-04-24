@@ -5,3 +5,4 @@ y.tab.c
 log.txt
 y.output
 *.o
+GUI/node_modules
