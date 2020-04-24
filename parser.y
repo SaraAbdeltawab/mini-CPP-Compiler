@@ -34,12 +34,12 @@
 };
 
 // Data
-%token <iValue> INTEGER
+%token <fValue> INTEGER
 %token <fValue> FLOAT
-%token <cValue> CHAR
+%token <sValue> CHAR
 %token <sValue> STRING
-%token <bValue> VAL_TRUE
-%token <bValue> VAL_FALSE                    
+%token <fValue> VAL_TRUE
+%token <fValue> VAL_FALSE                    
 %token <sIndex> VARIABLE
 %token TYPE_INT TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
 %token IF ELSE WHILE FOR SWITCH CASE DEFAULT BREAK REPEAT UNTIL PRINT        // Keywords
@@ -156,7 +156,7 @@ nodeType *conInt(int value) {
    nodeType *p = con();
     
     p->con.type = typeInt;
-    p->con.iValue = value;
+    p->con.fValue = value;
 
     return p;
 }
@@ -174,7 +174,7 @@ nodeType *conBool(bool value) {
     nodeType *p = con();
 
     p->con.type = typeBool;
-    p->con.bValue = value;
+    p->con.fValue = value;
 
     return p;
 }
@@ -184,7 +184,7 @@ nodeType *conChar(char value) {
     nodeType *p = con();
 
     p->con.type = typeChar;
-    p->con.cValue = value;
+    p->con.fValue = value;
 
     return p;
 }

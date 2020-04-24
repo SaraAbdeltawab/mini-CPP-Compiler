@@ -9,11 +9,8 @@ typedef struct {
 
     /* value of constant */
     union {
-        int iValue;                 /* integer value */	
         float fValue;               /* float value */
         char* sValue;               /* string value */
-        char  cValue;               /* char value */
-        bool  bValue;               /* bool value */
     };
                     
 } conNodeType; 
