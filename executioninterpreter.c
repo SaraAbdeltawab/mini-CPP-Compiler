@@ -6,9 +6,9 @@
 bool skipflag = 0;
 bool exSwitch(nodeType *p, int switchval, bool* casematch);
 
-conNodeType* ex(nodeType *p) {
+struct conNodeType* ex(nodeType *p) {
     bool casematch = 0;
-    conNodeType* pt = malloc(sizeof(conNodeType*));
+    struct conNodeType* pt = malloc(sizeof(struct conNodeType*));
     if (!p) return NULL;
     if(skipflag) return NULL;
     switch(p->type) {
@@ -45,7 +45,7 @@ conNodeType* ex(nodeType *p) {
 
                             case typeFloat: printf("%f\n", pt->fValue); break;
                                 
-                            case typeChar:  printf("%c\n", (char)pt->sValue); break;
+                            case typeChar:  printf("%c\n", (char)pt->fValue); break;
                             
                             case typeString:printf("%s\n", pt->sValue); break;
 
@@ -54,7 +54,24 @@ conNodeType* ex(nodeType *p) {
                         return NULL;
         
         case ';':       ex(p->opr.op[0]); return ex(p->opr.op[1]);
-        case '=':       sym[p->opr.op[0]->id.idx] = *ex(p->opr.op[1]); return &sym[p->opr.op[0]->id.idx]; 
+
+        case '_':       
+
+        case '=':       switch (p->opr.nops)
+                        {
+                            case 2:
+                                sym[p->opr.op[0]->id.idx] = *ex(p->opr.op[1]);
+                                return &sym[p->opr.op[0]->id.idx];
+                                
+                            case 3:
+                                sym[p->opr.op[1]->id.idx] = *ex(p->opr.op[2]);
+                                return &sym[p->opr.op[1]->id.idx];
+                                
+                            case 4:
+                                sym[p->opr.op[2]->id.idx] = *ex(p->opr.op[3]);
+                                return &sym[p->opr.op[2]->id.idx];
+                        }
+
         case UMINUS:    pt->fValue = -ex(p->opr.op[0])->fValue; return pt;
 
         case '+':       pt->fValue = ex(p->opr.op[0])->fValue + ex(p->opr.op[1])->fValue; return pt;

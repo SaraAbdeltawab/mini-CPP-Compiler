@@ -19,15 +19,12 @@
     void yyerror(char *);
     int yylex(void);
     int ex(nodeType *p);
-    conNodeType sym[26];
+    struct conNodeType sym[26];
 %}
 
 %union {
-    int   iValue;               /* integer value */	
     float fValue;               /* float value */
     char* sValue;               /* string value */
-    char  cValue;               /* char value */
-    bool  bValue;               /* bool value */
     char  sIndex;               /* symbol table index */
     nodeType *nPtr;             /* node pointer */
     
@@ -36,7 +33,7 @@
 // Data
 %token <fValue> INTEGER
 %token <fValue> FLOAT
-%token <sValue> CHAR
+%token <fValue> CHAR
 %token <sValue> STRING
 %token <fValue> VAL_TRUE
 %token <fValue> VAL_FALSE                    
@@ -69,7 +66,7 @@ program:
 stmt:
             ';'                                                                   { $$ = opr(';', 2, NULL, NULL); }
         |   expr ';'                                                              { $$ = $1; }
-        |   type VARIABLE ';'                                                     { $$ = opr('=',2,$1,id($2)); }
+        |   type VARIABLE ';'                                                     { $$ = opr('_',2,$1,id($2)); }
         |   VARIABLE '=' expr ';'                                                 { $$ = opr('=',2,id($1),$3); }
         |   type VARIABLE '=' expr ';'                                            { $$ = opr('=',3,$1,id($2),$4); }
         |   TYPE_CONST type VARIABLE '=' expr ';'                                 { $$ = opr('=',4,typ(conVar),$2,id($3),$5); }
