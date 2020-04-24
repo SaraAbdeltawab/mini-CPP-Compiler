@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
 typedef enum { typeCon, typeId, typeOpr, typeDef } nodeEnum;
-typedef enum { typeInt, typeFloat, typeString, typeChar, typeBool, conVar } conEnum;
+typedef enum { typeNotDefined, typeInt, typeFloat, typeString, typeChar, typeBool, conVar } conEnum;
 
 /* constants */
 struct conNodeType{
@@ -17,7 +17,7 @@ struct conNodeType{
 
 /* identifiers */
 struct idNodeType{
-    int idx;                      /* subscript to sym array */
+    char name;                      
 };
 
 /* operators */
@@ -27,6 +27,12 @@ struct oprNodeType{
     struct nodeTypeTag *op[1];	/* operands, extended at runtime */
 };
 
+/* types */
+struct typeNodeType{
+    conEnum type;                     
+};
+
+
 typedef struct nodeTypeTag {
     nodeEnum type;              /* type of node */
 
@@ -34,7 +40,6 @@ typedef struct nodeTypeTag {
         struct conNodeType con;        /* constants */
         struct idNodeType id;          /* identifiers */
         struct oprNodeType opr;        /* operators */
+        struct typeNodeType typ;       /* types */
     };
 } nodeType;
-
-extern struct conNodeType sym[26];

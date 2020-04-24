@@ -76,7 +76,7 @@ char *s;
 <STR>.       { *s++ = *yytext; }
 
 {smallletter}     { 
-                    yylval.sIndex = *yytext - 'a';
+                    yylval.sIndex = *yytext;
                     return VARIABLE;
                 }
 

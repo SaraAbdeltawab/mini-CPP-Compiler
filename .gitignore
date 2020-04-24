@@ -6,3 +6,4 @@ log.txt
 y.output
 *.o
 GUI/node_modules
+GUI/package-lock.json

@@ -3,9 +3,8 @@
 extern "C" {
 #endif
 
-
-  void insert(char key, conNodeType value);
-  conNodeType retrieve(char key);
+  struct conNodeType* insert(char key, struct conNodeType value, bool constant);
+  struct conNodeType* retrieve(char key);
 
 #ifdef __cplusplus
 } //end extern "C"

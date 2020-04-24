@@ -7,8 +7,8 @@
 
     /* prototypes */
     nodeType *opr(int oper, int nops, ...);
-    nodeType *id(int i);
-    nodeType *typ(int value);
+    nodeType *id(char name);
+    nodeType *typ(conEnum value);
     nodeType *con();
     nodeType *conInt(int value);
     nodeType *conFloat(float value);
@@ -19,7 +19,6 @@
     void yyerror(char *);
     int yylex(void);
     int ex(nodeType *p);
-    struct conNodeType sym[26];
 %}
 
 %union {
@@ -72,7 +71,7 @@ stmt:
         |   TYPE_CONST type VARIABLE '=' expr ';'                                 { $$ = opr('=',4,typ(conVar),$2,id($3),$5); }
         |   PRINT expr ';'                                                        { $$ = opr(PRINT,1,$2); }
         |   BREAK ';'                                                             { $$ = opr(BREAK,0); }
-        | SWITCH '(' VARIABLE ')' '{' case_list case_default '}'                  { $$ = opr(SWITCH,3,id($3),$6,$7); }
+        |   SWITCH '(' VARIABLE ')' '{' case_list case_default '}'                { $$ = opr(SWITCH,3,id($3),$6,$7); }
         |   IF '(' expr ')' stmt %prec IFX                                        { $$ = opr(IF,2,$3,$5); }
         |   IF '(' expr ')' stmt ELSE stmt                                        { $$ = opr(IF,3,$3,$5,$7); }
         |   FOR '(' VARIABLE '=' expr ';' expr ';' VARIABLE '=' expr ')' stmt     { $$ = opr(FOR,6,id($3),$5,$7,id($9),$11,$13); }
@@ -196,7 +195,7 @@ nodeType *conString(char* value) {
 }
 
 
-nodeType *id(int i) {
+nodeType *id(char name) {
     nodeType *p;
 
     /* allocate node */
@@ -205,7 +204,7 @@ nodeType *id(int i) {
 
     /* copy information */
     p->type = typeId;
-    p->id.idx = i;
+    p->id.name = name;
 
     return p;
 }
@@ -230,7 +229,7 @@ nodeType *opr(int oper, int nops, ...) {
     return p;
 }
 
-nodeType *typ(int type){
+nodeType *typ(conEnum type){
     nodeType *p;
 
     /* allocate node */
@@ -239,7 +238,7 @@ nodeType *typ(int type){
 
     /* copy information */
     p->type = typeDef;
-    p->con.type = type;
+    p->typ.type = type;
 
     return p;
 }
