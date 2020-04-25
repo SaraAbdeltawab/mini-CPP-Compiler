@@ -5,22 +5,35 @@
 using namespace std;
 
 
-unordered_map <char, pair<conNodeType, bool>> sym;
+unordered_map <char, pair<conNodeType, pair<bool,bool> >> sym;
   
-conNodeType* insert(char key, conNodeType value,bool constant) { 
+conNodeType* insert(char key, conEnum lType, conNodeType value, bool constant, bool initialized) { 
 
-    if(sym[key].first.type != typeNotDefined){
-       value.type = sym[key].first.type;
+    // Case Variable = expr;
+    if (lType == typeNotDefined){
+      if (sym[key].first.type != value.type){
+        cout << "Error: type mismatch" << endl;
+      }
+      if(sym[key].first.type == typeNotDefined){
+        cout << "Error: undeclared identifier" << endl;
+      }
+    }else{
+      // Case type Variable = expr;
+      // Case const type Variable = expr;
+      if (lType != value.type){
+        cout << "Error: type mismatch" << endl;
+      }
     }
 
-    if(sym[key].second != 0) constant = sym[key].second;
-
-    if(value.type == typeNotDefined){
-      cout << "Error: undeclared identifier name: " <<  key << endl;
-      exit(1);
+    // Case type Variable;
+    if (value.type == typeNotDefined){
+      value.type = lType;
     }
 
-    sym[key] = {value, constant};
+    if(sym[key].second.first != 0) constant = sym[key].second.first;
+    if(sym[key].second.second != 0) initialized = sym[key].second.second;
+
+    sym[key] = {value, {constant,initialized}};
 
     cout << "insert " << value.fValue << endl;
     return &sym[key].first;
@@ -28,10 +41,14 @@ conNodeType* insert(char key, conNodeType value,bool constant) {
 
   conNodeType* retrieve(char key){
     cout << "retrieve";
-    if(value.type == typeNotDefined){
+    if(sym[key].first.type == typeNotDefined){
       cout << "Error: undeclared identifier name: " <<  key << endl;
-      exit(1);
     }
+    
+    if(!sym[key].second.second){
+      cout << "Error: uninitializd identifier name: " <<  key << endl;
+    }
+
     return &sym[key].first;
   }
 

@@ -10,6 +10,7 @@ bool exSwitch(nodeType *p, int switchval, bool* casematch);
 struct conNodeType* ex(nodeType *p) {
     bool casematch = 0;
     struct conNodeType* pt = malloc(sizeof(struct conNodeType*));
+    struct conNodeType* pt2;
     conEnum type;
     if (!p) return NULL;
     if(skipflag) return NULL;
@@ -17,11 +18,11 @@ struct conNodeType* ex(nodeType *p) {
     case typeCon:       
         pt->type = p->con.type;
         switch(p->con.type){
-            case typeInt:        pt->fValue = p->con.fValue; 
-            case typeFloat:      pt->fValue = p->con.fValue; 
-            case typeString:     pt->sValue = p->con.sValue; 
-            case typeChar:       pt->fValue = p->con.fValue; 
-            case typeBool:       pt->fValue = p->con.fValue; 
+            case typeInt:        pt->fValue = p->con.fValue; pt->type=typeInt; 
+            case typeFloat:      pt->fValue = p->con.fValue; pt->type=typeFloat; 
+            case typeString:     pt->sValue = p->con.sValue; pt->type=typeString; 
+            case typeChar:       pt->fValue = p->con.fValue; pt->type=typeChar; 
+            case typeBool:       pt->fValue = p->con.fValue; pt->type=typeBool; 
         }
         return pt;
 
@@ -29,18 +30,40 @@ struct conNodeType* ex(nodeType *p) {
     case typeDef:       pt->type = p->typ.type; return pt;
     case typeOpr:
         switch(p->opr.oper) {
-        case WHILE:     while(ex(p->opr.op[0])->fValue){
-                            ex(p->opr.op[1]);
-                            if(skipflag){
-                                skipflag = 0;
-                                break;
-                            }
-                        }return NULL;
-        case IF:        if (ex(p->opr.op[0])->fValue)
-                            ex(p->opr.op[1]);
-                        else if (p->opr.nops > 2)
-                            ex(p->opr.op[2]);
-                        return NULL;
+        case WHILE:     pt = ex(p->opr.op[0]);
+                        if (pt->type == typeString){
+                            while(pt->sValue){
+                                ex(p->opr.op[1]);
+                                if(skipflag){
+                                    skipflag = 0;
+                                    break;
+                                }
+                            }return NULL;
+                        }else{
+                            while(pt->fValue){
+                                ex(p->opr.op[1]);
+                                if(skipflag){
+                                    skipflag = 0;
+                                    break;
+                                }
+                            }return NULL;
+                        }
+
+        case IF:        pt = ex(p->opr.op[0]);
+                        if (pt->type == typeString){
+                            if (pt->sValue)
+                                ex(p->opr.op[1]);
+                            else if (p->opr.nops > 2)
+                                ex(p->opr.op[2]);
+                            return NULL;
+
+                        }else{
+                            if (pt->fValue)
+                                ex(p->opr.op[1]);
+                            else if (p->opr.nops > 2)
+                                ex(p->opr.op[2]);
+                            return NULL;
+                        }
 
         case PRINT:     pt = ex(p->opr.op[0]);
                         switch (pt->type){
@@ -58,33 +81,92 @@ struct conNodeType* ex(nodeType *p) {
         
         case ';':       ex(p->opr.op[0]); return ex(p->opr.op[1]);
 
-        case '_':       return insert(p->opr.op[1]->id.name, *ex(p->opr.op[0]), 0);
+        case '_':       return insert(p->opr.op[1]->id.name, ex(p->opr.op[0])->type, *pt, 0, 0);
 
         case '=':       switch (p->opr.nops)
                         {
-                            case 2: return insert(p->opr.op[0]->id.name, *ex(p->opr.op[1]), 0);
+                            case 2: return insert(p->opr.op[0]->id.name, typeNotDefined,*ex(p->opr.op[1]), 0, 1);
                                 
                             case 3: pt = ex(p->opr.op[0]);
                                     type =  pt->type;
                                     pt = ex(p->opr.op[2]);
-                                    pt->type = type;
-                                    return insert(p->opr.op[1]->id.name, *pt, 0);
+                                    return insert(p->opr.op[1]->id.name, type, *pt, 0, 1);
                                 
                             case 4: pt = ex(p->opr.op[1]);
                                     type =  pt->type;
                                     pt = ex(p->opr.op[3]);
-                                    pt->type = type;
-                                    return insert(p->opr.op[2]->id.name, *pt, 1);
+                                    return insert(p->opr.op[2]->id.name, type, *pt, 1, 1);
                         }
 
-        case UMINUS:    pt->fValue = -ex(p->opr.op[0])->fValue; return pt;
+        case UMINUS:    pt = ex(p->opr.op[0]);
+                        if (pt->type == typeString || pt->type == typeChar ){
+                            printf("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = -(pt->fValue);
+                            return pt;
+                        }
 
-        case '+':       pt->fValue = ex(p->opr.op[0])->fValue + ex(p->opr.op[1])->fValue; return pt;
-        case '-':       pt->fValue = ex(p->opr.op[0])->fValue - ex(p->opr.op[1])->fValue; return pt;
-        case '*':       pt->fValue = ex(p->opr.op[0])->fValue * ex(p->opr.op[1])->fValue; return pt;
-        case '/':       pt->fValue = ex(p->opr.op[0])->fValue / ex(p->opr.op[1])->fValue; return pt;
-        case '%':       pt->fValue = (int)(ex(p->opr.op[0])->fValue) % (int)(ex(p->opr.op[1])->fValue); return pt;
+        case '+':       pt = ex(p->opr.op[0]); pt2 = ex(p->opr.op[1]);
+                        if ((pt->type == typeString || pt->type == typeChar)
+                            ||
+                            (pt2->type == typeString || pt2->type == typeChar)
+                        ){
+                            printf("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = pt->fValue + pt2->fValue;
+                            return pt;
+                        }
 
+        case '-':       pt = ex(p->opr.op[0]); pt2 = ex(p->opr.op[1]);
+                        if ((pt->type == typeString || pt->type == typeChar)
+                            ||
+                            (pt2->type == typeString || pt2->type == typeChar)
+                        ){
+                            printf("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = pt->fValue - pt2->fValue;
+                            return pt;
+                        }
+
+        case '*':       pt = ex(p->opr.op[0]); pt2 = ex(p->opr.op[1]);
+                        if ((pt->type == typeString || pt->type == typeChar)
+                            ||
+                            (pt2->type == typeString || pt2->type == typeChar)
+                        ){
+                            printf("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = pt->fValue * pt2->fValue;
+                            return pt;
+                        }
+
+        case '/':       pt = ex(p->opr.op[0]); pt2 = ex(p->opr.op[1]);
+                        if ((pt->type == typeString || pt->type == typeChar)
+                            ||
+                            (pt2->type == typeString || pt2->type == typeChar)
+                        ){
+                            printf("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = pt->fValue / pt2->fValue;
+                            return pt;
+                        }
+
+        case '%':       pt = ex(p->opr.op[0]); pt2 = ex(p->opr.op[1]);
+                        if ((pt->type == typeString || pt->type == typeChar)
+                            ||
+                            (pt2->type == typeString || pt2->type == typeChar)
+                        ){
+                            printf("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = (int)(pt->fValue) % (int)(pt2->fValue);
+                            return pt;
+                        }
+                        
         case AND:       pt->fValue = ex(p->opr.op[0])->fValue && ex(p->opr.op[1])->fValue; return pt;
         case OR:        pt->fValue = ex(p->opr.op[0])->fValue || ex(p->opr.op[1])->fValue; return pt;
         case '!':       pt->fValue = !ex(p->opr.op[0])->fValue; return pt;
@@ -96,7 +178,9 @@ struct conNodeType* ex(nodeType *p) {
         case EQ:        pt->fValue = ex(p->opr.op[0])->fValue == ex(p->opr.op[1])->fValue; return pt;
         case NE:        pt->fValue = ex(p->opr.op[0])->fValue != ex(p->opr.op[1])->fValue; return pt;
 
-        case FOR:       for(insert(p->opr.op[0]->id.name, *ex(p->opr.op[1]), 0); (bool)(ex(p->opr.op[2])->fValue); insert(p->opr.op[3]->id.name, *ex(p->opr.op[4]), 0)){
+        case FOR:       for(insert(p->opr.op[0]->id.name, typeNotDefined, *ex(p->opr.op[1]), 0, 1);
+                        (bool)(ex(p->opr.op[2])->fValue);
+                        insert(p->opr.op[3]->id.name, typeNotDefined, *ex(p->opr.op[4]), 0 ,1)){
                             ex(p->opr.op[5]);
                             if(skipflag){
                                 skipflag = 0;
