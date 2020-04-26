@@ -2,12 +2,13 @@
 %{
     #include <stdio.h>
     #include <stdarg.h>
+    #include <string.h>
     #include <stdlib.h>
     #include "structnodes.h"
 
     /* prototypes */
     nodeType *opr(int oper, int nops, ...);
-    nodeType *id(char name);
+    nodeType *id(char* name);
     nodeType *typ(conEnum value);
     nodeType *con();
     nodeType *conInt(int value);
@@ -26,7 +27,7 @@
 %union {
     float fValue;               /* float value */
     char* sValue;               /* string value */
-    char  sIndex;               /* symbol table index */
+    char*  sIndex;               /* symbol table index */
     nodeType *nPtr;             /* node pointer */
     
 };
@@ -190,14 +191,16 @@ nodeType *conChar(char value) {
 nodeType *conString(char* value) {
     nodeType *p = con();
 
+
     p->con.type = typeString;
-    p->con.sValue = value; /* make sure that we don't need to copy it first //modify */
+    p->con.sValue = value;
+
 
     return p;
 }
 
 
-nodeType *id(char name) {
+nodeType *id(char* name) {
     nodeType *p;
 
     /* allocate node */
@@ -206,7 +209,9 @@ nodeType *id(char name) {
 
     /* copy information */
     p->type = typeId;
+
     p->id.name = name;
+
 
     return p;
 }
@@ -269,7 +274,7 @@ int main(int argc, char* argv[]) {
 
     FILE* inputFile;
 
-    if((inputFile = fopen(argv[1], "r")) == NULL) == NULL){
+    if((inputFile = fopen(argv[1], "r")) == NULL){
         printf("Error reading files\n");
         exit(0);
     }

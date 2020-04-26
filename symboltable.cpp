@@ -7,20 +7,21 @@
 using namespace std;
 
 
-unordered_map <char, pair<conNodeType, pair<bool,bool> >> sym;
+unordered_map <char*, pair<conNodeType, pair<bool,bool> >> sym;
 
-conNodeType* insert(char key, conEnum lType, conNodeType value, bool constant, bool initialized) { 
+conNodeType* insert(char* key, conEnum lType, conNodeType value, bool constant, bool initialized) { 
    //freopen("errors.txt","a",stdout);
-
+    cout << "insert";
     // Case Variable = expr;
     if (lType == typeNotDefined){
-      if (sym[key].first.type != value.type){
-        cout << "Error: type mismatch" << endl;
+      if(sym[key].first.type == typeNotDefined){
+        cout << "Error: undeclared identifier name: " <<  key << endl;
         //fclose (stdout);
         return NULL;
       }
-      if(sym[key].first.type == typeNotDefined){
-        cout << "Error: undeclared identifier" << endl;
+
+      if (sym[key].first.type != value.type){
+        cout << "Error: type mismatch" << endl;
         //fclose (stdout);
         return NULL;
       }
@@ -49,7 +50,7 @@ conNodeType* insert(char key, conEnum lType, conNodeType value, bool constant, b
     return &sym[key].first;
   }
 
-  conNodeType* retrieve(char key){
+  conNodeType* retrieve(char* key){
     
     //cout << "retrieve\n";
     //freopen("errors.txt","a",stdout);

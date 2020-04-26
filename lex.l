@@ -75,10 +75,11 @@ char *s;
 <STR>\n      { printf("unterminated string constant"); exit(1); }
 <STR>.       { *s++ = *yytext; }
 
-{smallletter}     { 
-                    yylval.sIndex = *yytext;
-                    return VARIABLE;
-                }
+{letter}({letter}|{digit})*     { 
+                                  yylval.sIndex = malloc(strlen(yytext));
+                                  strcpy(yylval.sIndex, yytext); 
+                                  return VARIABLE;
+                                }
 
 0           {
                 yylval.fValue = atof(yytext);
