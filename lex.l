@@ -75,10 +75,11 @@ char *s;
 <STR>\n      { printf("unterminated string constant"); exit(1); }
 <STR>.       { *s++ = *yytext; }
 
-{smallletter}     { 
-                    yylval.sIndex = *yytext;
-                    return VARIABLE;
-                }
+{letter}({letter}|{digit})*     { 
+                                  yylval.sIndex = malloc(strlen(yytext));
+                                  strcpy(yylval.sIndex, yytext); 
+                                  return VARIABLE;
+                                }
 
 0           {
                 yylval.fValue = atof(yytext);
@@ -90,7 +91,7 @@ char *s;
                 return INTEGER;
             }
 
-{digit}+.{digit}+ {
+{digit}+"."{digit}+ {
                     yylval.fValue = atof(yytext);
                     return FLOAT;
               }
@@ -102,7 +103,7 @@ char *s;
 
 
     
-[-!()<>=+*/;{}.:] {   //where "." is used?
+[-!()<>=+*/;{}:] {  
                    return *yytext;
                 }
 

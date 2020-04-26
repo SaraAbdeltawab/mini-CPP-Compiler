@@ -2,12 +2,13 @@
 %{
     #include <stdio.h>
     #include <stdarg.h>
+    #include <string.h>
     #include <stdlib.h>
     #include "structnodes.h"
 
     /* prototypes */
     nodeType *opr(int oper, int nops, ...);
-    nodeType *id(char name);
+    nodeType *id(char* name);
     nodeType *typ(conEnum value);
     nodeType *con();
     nodeType *conInt(int value);
@@ -18,13 +19,15 @@
     void freeNode(nodeType *p);
     void yyerror(char *);
     int yylex(void);
-    int ex(nodeType *p);
+    int execute(nodeType *p);
+    extern FILE* yyin;    /* defined by lex; lex reads from this file   */
+    extern FILE* yyout;
 %}
 
 %union {
     float fValue;               /* float value */
     char* sValue;               /* string value */
-    char  sIndex;               /* symbol table index */
+    char*  sIndex;               /* symbol table index */
     nodeType *nPtr;             /* node pointer */
     
 };
@@ -58,7 +61,7 @@
 %%
 
 program:
-        program stmt        {ex($2); freeNode($2);}
+        program stmt        {execute($2); freeNode($2);}
         | /* NULL */            
         ;
 
@@ -153,7 +156,7 @@ nodeType *conInt(int value) {
     
     p->con.type = typeInt;
     p->con.fValue = value;
-
+    
     return p;
 }
 
@@ -188,14 +191,16 @@ nodeType *conChar(char value) {
 nodeType *conString(char* value) {
     nodeType *p = con();
 
+
     p->con.type = typeString;
-    p->con.sValue = value; /* make sure that we don't need to copy it first //modify */
+    p->con.sValue = value;
+
 
     return p;
 }
 
 
-nodeType *id(char name) {
+nodeType *id(char* name) {
     nodeType *p;
 
     /* allocate node */
@@ -204,7 +209,9 @@ nodeType *id(char name) {
 
     /* copy information */
     p->type = typeId;
+
     p->id.name = name;
+
 
     return p;
 }
@@ -258,7 +265,26 @@ void yyerror(char *s) {
     fprintf(stdout, "%s\n", s);
 }
 
-int main(void) {
+int main(int argc, char* argv[]) { 
+
+    // if(argc != 3){
+    //     printf("Wrong Arguments, Usage prog.exe  inputfile outputfile\n");
+    //     exit(0);
+    // }
+
+    FILE* inputFile;
+
+    if((inputFile = fopen(argv[1], "r")) == NULL){
+        printf("Error reading files\n");
+        exit(0);
+    }
+
+    yyin = inputFile;
+    // while(feof(yyin)==0)
+    // {
+    //     yyparse();
+    // }
+
     yyparse();
     return 0;
 }

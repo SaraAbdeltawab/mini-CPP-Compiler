@@ -17,7 +17,7 @@ struct conNodeType{
 
 /* identifiers */
 struct idNodeType{
-    char name;                      
+    char* name;                      
 };
 
 /* operators */
