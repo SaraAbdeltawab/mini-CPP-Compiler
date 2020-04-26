@@ -260,7 +260,26 @@ void yyerror(char *s) {
     fprintf(stdout, "%s\n", s);
 }
 
-int main(void) { 
+int main(int argc, char* argv[]) { 
+
+    // if(argc != 3){
+    //     printf("Wrong Arguments, Usage prog.exe  inputfile outputfile\n");
+    //     exit(0);
+    // }
+
+    FILE* inputFile;
+
+    if((inputFile = fopen(argv[1], "r")) == NULL) == NULL){
+        printf("Error reading files\n");
+        exit(0);
+    }
+
+    yyin = inputFile;
+    // while(feof(yyin)==0)
+    // {
+    //     yyparse();
+    // }
+
     yyparse();
     return 0;
 }
