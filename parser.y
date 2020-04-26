@@ -18,7 +18,9 @@
     void freeNode(nodeType *p);
     void yyerror(char *);
     int yylex(void);
-    int ex(nodeType *p);
+    int execute(nodeType *p);
+    extern FILE* yyin;    /* defined by lex; lex reads from this file   */
+    extern FILE* yyout;
 %}
 
 %union {
@@ -58,7 +60,7 @@
 %%
 
 program:
-        program stmt        {ex($2); freeNode($2);}
+        program stmt        {execute($2); freeNode($2);}
         | /* NULL */            
         ;
 
@@ -153,7 +155,7 @@ nodeType *conInt(int value) {
     
     p->con.type = typeInt;
     p->con.fValue = value;
-
+    
     return p;
 }
 
@@ -258,7 +260,7 @@ void yyerror(char *s) {
     fprintf(stdout, "%s\n", s);
 }
 
-int main(void) {
+int main(void) { 
     yyparse();
     return 0;
 }

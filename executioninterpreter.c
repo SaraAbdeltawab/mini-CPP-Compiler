@@ -10,6 +10,7 @@ bool exSwitch(nodeType *p, int switchval, bool* casematch);
 struct conNodeType* ex(nodeType *p) {
     bool casematch = 0;
     struct conNodeType* pt = malloc(sizeof(struct conNodeType*));
+    pt->type = typeNotDefined;
     struct conNodeType* pt2;
     conEnum type;
     if (!p) return NULL;
@@ -18,11 +19,11 @@ struct conNodeType* ex(nodeType *p) {
     case typeCon:       
         pt->type = p->con.type;
         switch(p->con.type){
-            case typeInt:        pt->fValue = p->con.fValue; pt->type=typeInt; 
-            case typeFloat:      pt->fValue = p->con.fValue; pt->type=typeFloat; 
-            case typeString:     pt->sValue = p->con.sValue; pt->type=typeString; 
-            case typeChar:       pt->fValue = p->con.fValue; pt->type=typeChar; 
-            case typeBool:       pt->fValue = p->con.fValue; pt->type=typeBool; 
+            case typeInt:        pt->fValue = p->con.fValue;  break; 
+            case typeFloat:      pt->fValue = p->con.fValue;  break;
+            case typeString:     pt->sValue = p->con.sValue;  break;
+            case typeChar:       pt->fValue = p->con.fValue;  break;
+            case typeBool:       pt->fValue = p->con.fValue;  break;
         }
         return pt;
 

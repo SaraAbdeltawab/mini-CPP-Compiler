@@ -90,7 +90,7 @@ char *s;
                 return INTEGER;
             }
 
-{digit}+.{digit}+ {
+{digit}+"."{digit}+ {
                     yylval.fValue = atof(yytext);
                     return FLOAT;
               }
@@ -102,7 +102,7 @@ char *s;
 
 
     
-[-!()<>=+*/;{}.:] {   //where "." is used?
+[-!()<>=+*/;{}:] {  
                    return *yytext;
                 }
 
