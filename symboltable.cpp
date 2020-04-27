@@ -9,19 +9,19 @@ using namespace std;
 
 unordered_map <char*, pair<conNodeType, pair<bool,bool> >> sym;
 
-conNodeType* insert(char* key, conEnum lType, conNodeType value, bool constant, bool initialized) { 
+conNodeType* insert(char* key, conEnum lType, conNodeType value, bool constant, bool initialized, char* error) { 
    //freopen("errors.txt","a",stdout);
     cout << "insert";
     // Case Variable = expr;
     if (lType == typeNotDefined){
       if(sym[key].first.type == typeNotDefined){
-        cout << "Error: undeclared identifier name: " <<  key << endl;
+        error = "Error: undeclared identifier name: ";
         //fclose (stdout);
         return NULL;
       }
 
       if (sym[key].first.type != value.type){
-        cout << "Error: type mismatch" << endl;
+        error = "Error: type mismatch";
         //fclose (stdout);
         return NULL;
       }
@@ -29,7 +29,7 @@ conNodeType* insert(char* key, conEnum lType, conNodeType value, bool constant, 
       // Case type Variable = expr;
       // Case const type Variable = expr;
       if (lType != value.type && value.type != typeNotDefined){
-        cout << "Error: type mismatch" << endl;
+        error = "Error: type mismatch";
         //fclose (stdout);
         return NULL;
       }
@@ -50,18 +50,18 @@ conNodeType* insert(char* key, conEnum lType, conNodeType value, bool constant, 
     return &sym[key].first;
   }
 
-  conNodeType* retrieve(char* key){
+  conNodeType* retrieve(char* key, char* error){
     
     //cout << "retrieve\n";
     //freopen("errors.txt","a",stdout);
     if(sym.find(key) == sym.end()){
-      cout << "Error: undeclared identifier name: " <<  key << endl;
-      //fclose (stdout);
-      return NULL;
+        error = "Error: undeclared identifier name: ";
+        //fclose (stdout);
+        return NULL;
     }
     
     if(!sym[key].second.second){
-      cout << "Error: uninitializd identifier name: " <<  key << endl;
+        error = "Error: undeclared identifier name: ";
       //fclose (stdout);
       return NULL;
     }
