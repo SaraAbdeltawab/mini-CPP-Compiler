@@ -268,6 +268,7 @@ void freeNode(nodeType *p) {
 
 void yyerror(char *s) {
     fprintf(stderr, "line %d: %s\n", yylineno, s);
+    exit(1);
 }
 
 int main(int argc, char* argv[]) { 
