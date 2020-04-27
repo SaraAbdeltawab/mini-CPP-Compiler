@@ -22,6 +22,8 @@
     int execute(nodeType *p);
     extern FILE* yyin;    /* defined by lex; lex reads from this file   */
     extern FILE* yyout;
+
+    int yylineno;
 %}
 
 %union {
@@ -81,6 +83,9 @@ stmt:
         |   REPEAT stmt  UNTIL '(' expr ')' ';'                                   { $$ = opr(REPEAT,2,$2,$5); }
         |   WHILE '(' expr ')' stmt                                               { $$ = opr(WHILE,2,$3,$5); }
         |   '{' stmt_list '}'                                                     { $$ = $2; }
+        |   error ';'                                                             { $$ = NULL; }
+        |   error '}'                                                             { $$ = NULL; }
+        |   error                                                                 { $$ = NULL; }
         ;
 
 type:
@@ -262,7 +267,7 @@ void freeNode(nodeType *p) {
 }
 
 void yyerror(char *s) {
-    fprintf(stdout, "%s\n", s);
+    fprintf(stderr, "line %d: %s\n", yylineno, s);
 }
 
 int main(int argc, char* argv[]) { 
@@ -286,5 +291,6 @@ int main(int argc, char* argv[]) {
     // }
 
     yyparse();
+    fclose(yyin);
     return 0;
 }

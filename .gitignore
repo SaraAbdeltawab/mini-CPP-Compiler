@@ -7,3 +7,4 @@ y.output
 *.o
 GUI/node_modules
 GUI/package-lock.json
+a.exe.stackdump

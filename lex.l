@@ -15,7 +15,7 @@ char buf[MAX_STRING_SZ];
 char *s;
 %}
 %x STR
-
+%option nounput yylineno
 %%
 
 
@@ -110,7 +110,10 @@ char *s;
 
 
 
-[ \t\n]+        ;       /* ignore whitespace */
+[ \t\n]+        { 
+                    if (yytext == '\n')
+                        yylineno++;
+                }
 
 .              {
                    yyerror("Unknown character");

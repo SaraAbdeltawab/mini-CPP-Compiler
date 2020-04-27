@@ -9,8 +9,7 @@ using namespace std;
 
 unordered_map <string, pair<conNodeType, pair<bool,bool> >> sym;
 
-conNodeType* insert(char* varName, conEnum lType, conNodeType value, bool constant, bool initialized) { 
-
+conNodeType* insert(char* varName, conEnum lType, conNodeType value, bool constant, bool initialized, char* error) { 
    //freopen("errors.txt","a",stdout);
    
   
@@ -18,16 +17,14 @@ conNodeType* insert(char* varName, conEnum lType, conNodeType value, bool consta
     cout << "insert" << key << endl;
     // Case Variable = expr;
     if (lType == typeNotDefined){
-      if (sym[key].first.type != value.type){
-        cout << "debig\n";
-        cout << "Error: type mismatch" << endl;
+      if(sym[key].first.type == typeNotDefined){
+        error = "Error: undeclared identifier name: ";
         //fclose (stdout);
         return NULL;
       }
-  
-      if(sym[key].first.type == typeNotDefined){
-        cout << "debig\n";
-        cout << "Error: undeclared identifier name: " <<  key << endl;
+
+      if (sym[key].first.type != value.type){
+        error = "Error: type mismatch";
         //fclose (stdout);
         return NULL;
       }
@@ -36,8 +33,7 @@ conNodeType* insert(char* varName, conEnum lType, conNodeType value, bool consta
       // Case type Variable = expr;
       // Case const type Variable = expr;
       if (lType != value.type && value.type != typeNotDefined){
-        cout << "debig\n";
-        cout << "Error: type mismatch" << endl;
+        error = "Error: type mismatch";
         //fclose (stdout);
         return NULL;
       }
@@ -60,19 +56,19 @@ conNodeType* insert(char* varName, conEnum lType, conNodeType value, bool consta
     return &sym[key].first;
   }
 
-  conNodeType* retrieve(char* varName){
+  conNodeType* retrieve(char* varName, char* error){
 
     string key(varName);
     
     //freopen("errors.txt","a",stdout);
     if(sym.find(key) == sym.end()){
-      cout << "Error: undeclared identifier name: " <<  key << endl;
-      //fclose (stdout);
-      return NULL;
+        error = "Error: undeclared identifier name: ";
+        //fclose (stdout);
+        return NULL;
     }
     
     if(!sym[key].second.second){
-      cout << "Error: uninitializd identifier name: " <<  key << endl;
+        error = "Error: undeclared identifier name: ";
       //fclose (stdout);
       return NULL;
     }
