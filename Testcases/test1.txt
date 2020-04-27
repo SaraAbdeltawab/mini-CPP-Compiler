@@ -4,12 +4,12 @@ float c = 22.1;
 char d = 'x';
 string name = "Habhob";
 bool flag = true;
-
+symboltable;
 
 int var1 = a + b;
 int var2 = a - b;
 float var3 = c - 1.1;
-
+symboltable;
 
 while(var1 > 3){
 	print var1;

@@ -43,7 +43,7 @@
 %token <fValue> VAL_FALSE                    
 %token <sIndex> VARIABLE
 %token TYPE_INT TYPE_FLT TYPE_STR TYPE_CHR TYPE_BOOL TYPE_CONST EXIT  // Data types
-%token IF ELSE WHILE FOR SWITCH CASE DEFAULT BREAK REPEAT UNTIL PRINT        // Keywords
+%token IF ELSE WHILE FOR SWITCH CASE DEFAULT BREAK REPEAT UNTIL PRINT  SYMBOLTABLE     // Keywords
 
 %nonassoc IFX
 %nonassoc ELSE
@@ -86,6 +86,7 @@ stmt:
         |   error ';'                                                             { $$ = NULL; }
         |   error '}'                                                             { $$ = NULL; }
         |   error                                                                 { $$ = NULL; }
+        |   SYMBOLTABLE ';'                                                       { $$ = opr(SYMBOLTABLE,1,NULL,NULL);}
         ;
 
 type:
@@ -268,7 +269,6 @@ void freeNode(nodeType *p) {
 
 void yyerror(char *s) {
     fprintf(stderr, "line %d: %s\n", yylineno, s);
-    exit(1);
 }
 
 int main(int argc, char* argv[]) { 
