@@ -1,0 +1,5 @@
+MOV	y	x	
+MOV	x	1	
+MOV	y	x	
+MOV	x	1	
+MOV	x	1	

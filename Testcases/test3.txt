@@ -1,0 +1,17 @@
+int i = 6;
+if(i <= 2){
+	i = x + 1;
+}
+
+float z = 1.2;
+i = z;
+
+int j;
+i = j;
+
+const int u = 1;
+u = 5;
+
+i = 1
+
+@

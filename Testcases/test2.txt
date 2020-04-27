@@ -1,0 +1,30 @@
+bool flag = false;
+bool flag2 = true;
+bool res1 = (flag2 || flag);
+bool res2 = (flag2 && flag);
+bool res3 = !flag;
+
+int store = 0;
+int x = 6;
+int y = 2;
+if(res3 == true){
+   store = 5*6;
+}
+else if(res2  == false){
+   store = 4/2;
+}
+else{
+   store = x % y;
+}
+
+repeat{
+  print store;
+   x = x - 1;
+}until(x < 3);
+
+switch(store){
+	case 3:{print 3; break;}
+	case 2:{print 2; break;}
+	default:{print1;}
+}
+	

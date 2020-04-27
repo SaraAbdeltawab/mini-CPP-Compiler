@@ -1,27 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdarg.h>
 #include "symboltable.h"
 #include "y.tab.h"
 
-
-//bool exSwitch(nodeType *p, int switchval, bool* casematch);
-
-
 static int lbl = 1;
 const int reservedlbl = 0;
-int lbl1, lbl2;
 char* varName;
+char* error = "";
 FILE* outFile;
 
 void execute(nodeType *p);
+void yyerror(char *);
 
 struct conNodeType* ex(nodeType *p, int oper) {
+    int lbl1, lbl2;
     struct conNodeType* pt = malloc(sizeof(struct conNodeType*));
     pt->type = typeNotDefined;
     struct conNodeType* pt2;
     conEnum type;
-    char* error = "";
+    
     if (!p) return NULL;
     switch(p->type) {
     case typeCon:       
@@ -40,9 +39,9 @@ struct conNodeType* ex(nodeType *p, int oper) {
 
     case typeId:      if(oper == '=') fprintf(outFile, "MOV\t%s\t", varName);
                       fprintf(outFile, "%s\t", p->id.name); 
-                      pt = retrieve(p->id.name,error);
+                      pt = retrieve(p->id.name, &error);
                       if (error != ""){
-                          yyerror(error);
+                          yyerror(error); 
                       }
                       return pt;
                 
@@ -83,9 +82,9 @@ struct conNodeType* ex(nodeType *p, int oper) {
         case ';':       ex(p->opr.op[0],0); return ex(p->opr.op[1],0);
                         
 
-        case '_':       pt = insert(p->opr.op[1]->id.name, ex(p->opr.op[0],0)->type, *pt, 0, 0, error);
+        case '_':       pt = insert(p->opr.op[1]->id.name, ex(p->opr.op[0],0)->type, *pt, 0, 0, &error);
                         if (error != ""){
-                          yyerror(error);
+                          yyerror(error);                   
                       }
                       return pt;
 
@@ -95,9 +94,9 @@ struct conNodeType* ex(nodeType *p, int oper) {
                                     varName =  p->opr.op[0]->id.name;
                                     pt = ex(p->opr.op[1], '=');
                                     fprintf(outFile, "\n");
-                                    pt = insert(varName, typeNotDefined, *pt, 0, 1,error);
+                                    pt = insert(varName, typeNotDefined, *pt, 0, 1, &error);
                                     if (error != ""){
-                                        yyerror(error);
+                                        yyerror(error);                                    
                                     }
                                     return pt;
                             
@@ -109,9 +108,9 @@ struct conNodeType* ex(nodeType *p, int oper) {
                                     pt = ex(p->opr.op[2], '=');
                                     fprintf(outFile, "\n");
                                     if(!pt) return NULL;
-                                    pt = insert(varName, type, *pt, 0, 1,error);
+                                    pt = insert(varName, type, *pt, 0, 1, &error);
                                     if (error != ""){
-                                        yyerror(error);
+                                        yyerror(error);                                  
                                     }
                                     return pt;
                                                 
@@ -122,40 +121,17 @@ struct conNodeType* ex(nodeType *p, int oper) {
                                     pt = ex(p->opr.op[3], '=');
                                     fprintf(outFile, "\n");
                                     // return insert(p->opr.op[2]->id.name, type, *pt, 1, 1);
-                                    pt = insert(p->opr.op[2]->id.name, type, *pt, 1, 1,error);
-                                    if (error != ""){
-                                        yyerror(error);
+                                    pt = insert(p->opr.op[2]->id.name, type, *pt, 1, 1, &error);
+                                    if (error != ""){                                     
+                                        yyerror(error);                                     
                                     }
                                     return pt;
                         }
 
-        case UMINUS:    
-                        // pt = ex(p->opr.op[0],0;
-                        // if (pt->type == typeString || pt->type == typeChar ){
-                        //     fprintf(outFile, "Error: can't perform this operation on strings or char");
-                        //     return NULL;
-                        // }else{
-                        //     pt->fValue = -(pt->fValue);
-                        //     return pt;
-                        // }
-
-                        
-                        fprintf(outFile, "NFG\t");
+        case UMINUS:    fprintf(outFile, "NFG\t");
                         return ex(p->opr.op[0],0);;
 
-        case '+':       
-                        // pt = ex(p->opr.op[0],0; pt2 = ex(p->opr.op[0],0;
-                        // if ((pt->type == typeString || pt->type == typeChar)
-                        //     ||
-                        //     (pt2->type == typeString || pt2->type == typeChar)
-                        // ){
-                        //     fprintf(outFile, "Error: can't perform this operation on strings or char");
-                        //     return NULL;
-                        // }else{
-                        //     pt->fValue = pt->fValue + pt2->fValue;
-                        //     return pt;
-                        // }
-                        fprintf(outFile, "ADD\t");
+        case '+':       fprintf(outFile, "ADD\t");
                         pt = ex(p->opr.op[0],0);
                         pt2 = ex(p->opr.op[1],0);
                         fprintf(outFile, "%s\n", varName);
@@ -196,18 +172,22 @@ struct conNodeType* ex(nodeType *p, int oper) {
                         fprintf(outFile, "AND\t");
                         pt = ex(p->opr.op[0],0);
                         pt2 = ex(p->opr.op[1],0);
-                        if(ex(p->opr.op[0],0)->type != ex(p->opr.op[1],0)->type) yyerror("Error: type mismatch of the two AND operands");
-                        return NULL;
+                        if(pt && pt2 && pt->type != pt2->type) yyerror("Error: type mismatch of the two AND operands");
+                        fprintf(outFile, "%s\n", varName);
+                        return pt;
 
         case OR:        //pt->fValue = ex(p->opr.op[0],0->fValue || ex(p->opr.op[1],0->fValue; return pt;
                         fprintf(outFile, "OR\t");
                         pt = ex(p->opr.op[0],0);
                         pt2 = ex(p->opr.op[1],0);
-                        if(ex(p->opr.op[0],0)->type != ex(p->opr.op[1],0)->type) yyerror("Error: type mismatch of the two OR operands");
-                        return NULL;
+                        if(pt && pt2 && pt->type != pt2->type) yyerror("Error: type mismatch of the two OR operands");
+                        fprintf(outFile, "%s\n", varName);
+                        return pt;
         case '!':       //pt->fValue = !ex(p->opr.op[0],0->fValue; return pt;
                         fprintf(outFile, "NOT\t");
-                        return ex(p->opr.op[0], 0);;
+                        pt = ex(p->opr.op[0], 0);
+                        fprintf(outFile, "%s\n", varName);
+                        return pt;
                         
         case '<':     //pt->fValue = ex(p->opr.op[0],0->fValue < ex(p->opr.op[1],0->fValue; return pt;
                         fprintf(outFile, "\nCMPL\t");
@@ -247,6 +227,7 @@ struct conNodeType* ex(nodeType *p, int oper) {
 
         case FOR:       fprintf(outFile, "MOV\t%s\t", p->opr.op[0]->id.name);
                         pt = ex(p->opr.op[1],0);
+                        insert(p->opr.op[0]->id.name, typeNotDefined, *pt, 0, 1, &error);
                         fprintf(outFile, "\nL%03d:\n", lbl1 = lbl++);
                         ex(p->opr.op[2],0);
                         fprintf(outFile, "\nJZ\tL%03d\n", lbl2 = lbl++);
@@ -255,26 +236,27 @@ struct conNodeType* ex(nodeType *p, int oper) {
                         pt2 = ex(p->opr.op[4], 0);
                         fprintf(outFile, "\nJMP\tL%03d\n", lbl1);
                         fprintf(outFile, "L%03d:\n", lbl2);
-
-                        insert(p->opr.op[0]->id.name, typeNotDefined, *pt, 0, 1,error);
-                        if(error != "") yyerror(error);
+                        if(error != "") { 
+                            yyerror(error); 
+                        }
                         error = "";
-                        insert(varName, typeNotDefined, *pt2, 0 ,1,error);
-                        if(error != "") yyerror(error);
+                        insert(varName, typeNotDefined, *pt2, 0 ,1, &error);
+
+                        if(error != "") yyerror(error); 
                         return NULL;
 
         case REPEAT:  	fprintf(outFile, "L%03d:\n", lbl1 = lbl++);
                         ex(p->opr.op[0],0);
                         ex(p->opr.op[1],0);
-                        fprintf(outFile, "JZ\tL%03d\n", lbl2 = lbl++);
+                        fprintf(outFile, "\nJZ\tL%03d\n", lbl2 = lbl++);
                         fprintf(outFile, "JMP\tL%03d\n", lbl1);
                         fprintf(outFile, "L%03d:\n", lbl2);
                         return NULL;
                     
         case SWITCH:    //if(!exSwitch(p->opr,''.op[1], retrieve(p->opr.op[0]->id.name)->fValue, &casematch)) ex(p->opr.op[2],0; skipflag = 0; return 0;
                         varName = p->opr.op[0]->id.name;
-                        retrieve(varName,error);
-                        if(error != "") yyerror(error);
+                        retrieve(varName, &error);
+                        if(error != "") yyerror(error); 
                         fprintf(outFile, "MOV R0, 0\n");
                         ex(p->opr.op[1], 0);
                         ex(p->opr.op[2], 0);
@@ -311,13 +293,3 @@ void execute(nodeType *p){
     ex(p, 0);
     fclose(outFile);
 }
-
-
-// bool exSwitch(nodeTy,''pe *p, int switchval, bool* casematch){
-//     if(!p) return 0;
-//     if(p->opr.op[0] != NULL) exSwitch(p->opr,''.op[0], switchval, casematch);
-//     if(switchval == (int)(ex(p->opr.op[1],0->fValue) && !*casematch) {
-//         *casematch = 1;
-//         ex(p->opr.op[2])0/     }
-//     else if(*casematch && !skipflag) ex(p->opr.op[2])0//     return *casematch;
-// }

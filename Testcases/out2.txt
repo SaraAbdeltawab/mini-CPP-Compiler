@@ -1,0 +1,61 @@
+MOV	flag	0	
+MOV	flag2	1	
+OR	flag2	flag	res1
+
+AND	flag2	flag	res2
+
+NOT	flag	res3
+
+MOV	store	0	
+MOV	x	6	
+MOV	y	2	
+CMPE	res3	1	
+JZ	L001
+MUL	5	6	store
+
+JMP	L002
+L001:
+CMPE	res2	0	
+JZ	L003
+DIV	4	2	store
+
+JMP	L004
+L003:
+MOD	x	y	store
+
+L004:
+L002:
+L005:
+PRINT	store	
+SUB	x	1	x
+
+
+CMPL	x	3	
+JZ	L006
+JMP	L005
+L006:
+MOV R0, 0
+CMP R0 1
+JE	L007
+CMP	store	3	
+JZ	L008
+MOV R0 1
+L007:
+PRINT	3	
+JMP	L000
+
+L008:
+CMP R0 1
+JE	L009
+CMP	store	2	
+JZ	L010
+MOV R0 1
+L009:
+PRINT	2	
+JMP	L000
+
+L010:
+L011:
+PRINT	1	
+
+L000:
