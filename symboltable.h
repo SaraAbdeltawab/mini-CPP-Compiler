@@ -3,7 +3,7 @@
 extern "C" {
 #endif
 
-  struct conNodeType* insert(char* key,conEnum lType, struct conNodeType value, bool constant,bool initialized);
+  struct conNodeType* insert(char* varName,conEnum lType, struct conNodeType value, bool constant,bool initialized);
   struct conNodeType* retrieve(char* key);
 
 #ifdef __cplusplus

@@ -7,28 +7,36 @@
 using namespace std;
 
 
-unordered_map <char*, pair<conNodeType, pair<bool,bool> >> sym;
+unordered_map <string, pair<conNodeType, pair<bool,bool> >> sym;
 
-conNodeType* insert(char* key, conEnum lType, conNodeType value, bool constant, bool initialized) { 
+conNodeType* insert(char* varName, conEnum lType, conNodeType value, bool constant, bool initialized) { 
+
    //freopen("errors.txt","a",stdout);
-    cout << "insert";
+   
+  
+    string key(varName);
+    cout << "insert" << key << endl;
     // Case Variable = expr;
     if (lType == typeNotDefined){
+      if (sym[key].first.type != value.type){
+        cout << "debig\n";
+        cout << "Error: type mismatch" << endl;
+        //fclose (stdout);
+        return NULL;
+      }
+  
       if(sym[key].first.type == typeNotDefined){
+        cout << "debig\n";
         cout << "Error: undeclared identifier name: " <<  key << endl;
         //fclose (stdout);
         return NULL;
       }
 
-      if (sym[key].first.type != value.type){
-        cout << "Error: type mismatch" << endl;
-        //fclose (stdout);
-        return NULL;
-      }
     }else{
       // Case type Variable = expr;
       // Case const type Variable = expr;
       if (lType != value.type && value.type != typeNotDefined){
+        cout << "debig\n";
         cout << "Error: type mismatch" << endl;
         //fclose (stdout);
         return NULL;
@@ -43,6 +51,8 @@ conNodeType* insert(char* key, conEnum lType, conNodeType value, bool constant, 
     if(sym[key].second.first != 0) constant = sym[key].second.first;
     if(sym[key].second.second != 0) initialized = sym[key].second.second;
 
+    cout << "done insert" << key << endl;
+
     sym[key] = {value, {constant,initialized}};
 
     //fclose (stdout);
@@ -50,9 +60,10 @@ conNodeType* insert(char* key, conEnum lType, conNodeType value, bool constant, 
     return &sym[key].first;
   }
 
-  conNodeType* retrieve(char* key){
+  conNodeType* retrieve(char* varName){
+
+    string key(varName);
     
-    //cout << "retrieve\n";
     //freopen("errors.txt","a",stdout);
     if(sym.find(key) == sym.end()){
       cout << "Error: undeclared identifier name: " <<  key << endl;

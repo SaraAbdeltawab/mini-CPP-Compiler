@@ -38,8 +38,9 @@ struct conNodeType* ex(nodeType *p, int oper) {
         return pt;
 
 
-    case typeId:      fprintf(outFile, "%s\t", p->id.name); 
-                      return retrieve(p->id.name);
+    case typeId:       if(oper == '=') fprintf(outFile, "MOV\t%s\t", varName);
+                       fprintf(outFile, "%s\t", p->id.name); 
+                       return retrieve(p->id.name);
                 
     case typeDef:       pt->type = p->typ.type; return pt;
     case typeOpr:
