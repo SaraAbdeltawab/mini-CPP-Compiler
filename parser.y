@@ -267,24 +267,31 @@ void freeNode(nodeType *p) {
 }
 
 void yyerror(char *s) {
-    fprintf(stderr, "line %d: %s\n", yylineno, s);
+    fprintf(yyout, "line %d: %s\n", yylineno, s);
 }
 
 int main(int argc, char* argv[]) { 
 
-    // if(argc != 3){
-    //     printf("Wrong Arguments, Usage prog.exe  inputfile outputfile\n");
-    //     exit(0);
-    // }
+    if(argc != 3){
+        printf("Wrong Arguments, Usage prog.exe  inputfile outputfile\n");
+        exit(0);
+    }
 
     FILE* inputFile;
+    FILE* outputFile;
 
     if((inputFile = fopen(argv[1], "r")) == NULL){
-        printf("Error reading files\n");
+        printf("Error reading input file\n");
+        exit(0);
+    }
+    if((outputFile = fopen(argv[2], "w")) == NULL){
+        printf("Error reading input file\n");
         exit(0);
     }
 
     yyin = inputFile;
+    yyout = outputFile;
+
     // while(feof(yyin)==0)
     // {
     //     yyparse();
@@ -292,5 +299,7 @@ int main(int argc, char* argv[]) {
 
     yyparse();
     fclose(yyin);
+    fclose(yyout);
+
     return 0;
 }

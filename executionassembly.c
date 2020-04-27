@@ -307,7 +307,7 @@ struct conNodeType* ex(nodeType *p, int oper) {
  
 
 void execute(nodeType *p){
-    outFile = fopen("quadruples.txt", "w+");
+    outFile = fopen("quadruples.txt", "a");
     ex(p, 0);
     fclose(outFile);
 }

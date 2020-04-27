@@ -5,6 +5,7 @@ y.tab.c
 *.txt
 y.output
 *.o
+*.out
 GUI/node_modules
 GUI/package-lock.json
 a.exe.stackdump
