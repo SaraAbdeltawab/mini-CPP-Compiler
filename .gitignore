@@ -2,7 +2,6 @@ a.exe
 lex.yy.c
 y.tab.h
 y.tab.c
-*.txt
 y.output
 *.o
 GUI/node_modules

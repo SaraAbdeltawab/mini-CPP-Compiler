@@ -1,0 +1,25 @@
+int a = 1;
+const int b = 3;
+float c = 22.1;
+char d = 'x';
+string name = "Habhob";
+bool flag = true;
+
+
+int var1 = a + b;
+int var2 = a - b;
+float var3 = c - 1.1;
+
+
+while(var1 > 3){
+	print var1;
+	var1  = var1 - 1;
+	if(var1 == var2) a = 5;
+}
+
+
+int i;
+for(i = 0; i<2; i = i+1){
+	print 4;
+}
+
