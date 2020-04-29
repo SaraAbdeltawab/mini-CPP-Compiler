@@ -5,6 +5,7 @@ extern "C" {
 
   struct conNodeType* insert(char* varName,conEnum lType, struct conNodeType value, bool constant,bool initialized, char** error);
   struct conNodeType* retrieve(char* varName, char** error);
+  void printSymbolTable();
 
 #ifdef __cplusplus
 } //end extern "C"

@@ -1,7 +1,5 @@
 int i = 6;
-if(i <= 2){
-	i = x + 1;
-}
+i = x + 1;
 
 float z = 1.2;
 i = z;

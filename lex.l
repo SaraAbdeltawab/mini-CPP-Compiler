@@ -18,7 +18,7 @@ char *s;
 %option nounput yylineno
 %%
 
-
+"symboltable" return SYMBOLTABLE;
 "if"      return IF;
 "else"    return ELSE;
 "while"	  return WHILE;
