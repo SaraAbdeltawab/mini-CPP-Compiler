@@ -85,7 +85,6 @@ stmt:
         |   '{' stmt_list '}'                                                     { $$ = $2; }
         |   error ';'                                                             { $$ = NULL; }
         |   error '}'                                                             { $$ = NULL; }
-        |   error                                                                 { $$ = NULL; }
         ;
 
 type:
@@ -274,7 +273,7 @@ void yyerror(char *s) {
 int main(int argc, char* argv[]) { 
 
     if(argc != 3){
-        printf("Wrong Arguments, Usage prog.exe  inputfile outputfile\n");
+        printf("Wrong Arguments, Usage prog.exe inputfile outputfile\n");
         exit(0);
     }
 
