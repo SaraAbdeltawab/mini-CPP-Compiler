@@ -2,7 +2,7 @@ int a = 1;
 const int b = 3;
 float c = 22.1;
 char d = 'x';
-string name = "Habhob";
+string name1 = "Habhob";
 bool flag = true;
 symboltable;
 

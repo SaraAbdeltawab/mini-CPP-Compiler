@@ -274,7 +274,7 @@ void yyerror(char *s) {
 int main(int argc, char* argv[]) { 
 
     if(argc != 3){
-        printf("Wrong Arguments, Usage prog.exe  inputfile outputfile\n");
+        printf("Wrong Arguments, Usage prog.exe  inputfile  Errorfile\n");
         exit(0);
     }
 
@@ -293,10 +293,6 @@ int main(int argc, char* argv[]) {
     yyin = inputFile;
     yyout = outputFile;
 
-    // while(feof(yyin)==0)
-    // {
-    //     yyparse();
-    // }
 
     yyparse();
     fclose(yyin);

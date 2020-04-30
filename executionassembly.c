@@ -42,8 +42,9 @@ struct conNodeType* ex(nodeType *p, int oper) {
 
 
     case typeId:      if(oper == '=') fprintf(outFile, "MOV\t%s\t", varName);
-                      fprintf(outFile, "%s\t", p->id.name); 
-                      *pt = *retrieve(p->id.name, &error);
+                      fprintf(outFile, "%s\t", p->id.name);
+                      pt2 = retrieve(p->id.name, &error);
+                      if(pt2) *pt = *pt2;
                       if (error != ""){
                           yyerror(error); 
                           error = "";
@@ -87,7 +88,10 @@ struct conNodeType* ex(nodeType *p, int oper) {
         case ';':       ex(p->opr.op[0],0); return ex(p->opr.op[1],0);
                         
 
-        case '_':       if(pt) *pt = *insert(p->opr.op[1]->id.name, ex(p->opr.op[0],0)->type, *pt, 0, 0, &error);
+        case '_':       if(pt){
+                            pt2 = insert(p->opr.op[1]->id.name, ex(p->opr.op[0],0)->type, *pt, 0, 0, &error);
+                            if(pt2) *pt = *pt2;
+                        } 
                         if (error != ""){
                           yyerror(error);      
                           error = "";             
@@ -96,11 +100,15 @@ struct conNodeType* ex(nodeType *p, int oper) {
 
         case '=':       switch (p->opr.nops)
                         {
-                            case 2: //return insert(p->opr.op[0]->id.name, typeNotDefined,*ex(p->opr.op[1]), 0, 1);
+                            case 2: 
                                     varName =  p->opr.op[0]->id.name;
                                     pt = ex(p->opr.op[1], '=');
                                     fprintf(outFile, "\n");
-                                    if(pt) *pt = *insert(varName, typeNotDefined, *pt, 0, 1, &error);
+                                    
+                                    if(pt){
+                                        pt2 = insert(varName, typeNotDefined, *pt, 0, 1, &error);
+                                        if(pt2) *pt = *pt2;
+                                    }
                                     if (error != ""){
                                         yyerror(error);        
                                         error = "";                            
@@ -110,12 +118,14 @@ struct conNodeType* ex(nodeType *p, int oper) {
                             case 3: 
                                     pt = ex(p->opr.op[0],0);
                                     type =  pt->type;
-                                    // return insert(p->opr.op[1]->id.name, type, *pt, 0, 1);
                                     varName =  p->opr.op[1]->id.name; //var
                                     pt = ex(p->opr.op[2], '=');
                                     fprintf(outFile, "\n");
                                     if(!pt) return NULL;
-                                    if(pt) *pt = *insert(varName, type, *pt, 0, 1, &error);
+                                    if(pt){
+                                        pt2 = insert(varName, type, *pt, 0, 1, &error);
+                                        if(pt2) *pt = *pt2;
+                                    }
                                     if (error != ""){
                                         yyerror(error);   
                                         error = "";                               
@@ -128,8 +138,10 @@ struct conNodeType* ex(nodeType *p, int oper) {
                                     varName = p->opr.op[2]->id.name;
                                     pt = ex(p->opr.op[3], '=');
                                     fprintf(outFile, "\n");
-                                    // return insert(p->opr.op[2]->id.name, type, *pt, 1, 1);
-                                    if(pt) *pt = *insert(p->opr.op[2]->id.name, type, *pt, 1, 1, &error);
+                                    if(pt){
+                                        pt = insert(p->opr.op[2]->id.name, type, *pt, 1, 1, &error);
+                                        if(pt2) *pt = *pt2;
+                                    } 
                                     if (error != ""){                                     
                                         yyerror(error);                                     
                                         error = "";
@@ -285,7 +297,7 @@ struct conNodeType* ex(nodeType *p, int oper) {
                         fprintf(outFile, "L%03d:\n", lbl2);
                         return NULL;
                     
-        case SWITCH:    //if(!exSwitch(p->opr,''.op[1], retrieve(p->opr.op[0]->id.name)->fValue, &casematch)) ex(p->opr.op[2],0; skipflag = 0; return 0;
+        case SWITCH:    
                         varName = p->opr.op[0]->id.name;
                         retrieve(varName, &error);
                         if(error != "") {yyerror(error); error = "";}

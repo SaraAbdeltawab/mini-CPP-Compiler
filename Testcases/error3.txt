@@ -1,0 +1,10 @@
+line 2: Error: undeclared identifier 
+line 2: Error: type mismatch of the two ADD operands
+line 2: Error: type mismatch 
+line 5: Error: type mismatch 
+line 8: Error: unintialized identifier 
+line 8: Error: type mismatch 
+line 11: Error: constant variable can't be reassigned 
+line 13: Error: can't perform this operation on strings or char
+line 16: Unknown character
+line 16: syntax error

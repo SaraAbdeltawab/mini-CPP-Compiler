@@ -10,6 +10,7 @@ i = j;
 const int u = 1;
 u = 5;
 
+string name = "sara" + "Ahmed";
 i = 1
 
 @
