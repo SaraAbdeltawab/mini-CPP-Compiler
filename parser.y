@@ -85,7 +85,6 @@ stmt:
         |   '{' stmt_list '}'                                                     { $$ = $2; }
         |   error ';'                                                             { $$ = NULL; }
         |   error '}'                                                             { $$ = NULL; }
-        |   error                                                                 { $$ = NULL; }
         |   SYMBOLTABLE ';'                                                       { $$ = opr(SYMBOLTABLE,1,NULL,NULL);}
         ;
 
