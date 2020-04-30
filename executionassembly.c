@@ -168,7 +168,6 @@ struct conNodeType* ex(nodeType *p, int oper) {
                             pt->fValue = pt->fValue + pt2->fValue;
                             return pt;
                         }
-                        return pt;
 
         case '-':       
                         fprintf(outFile, "SUB\t");
@@ -187,29 +186,54 @@ struct conNodeType* ex(nodeType *p, int oper) {
                             pt->fValue = pt->fValue - pt2->fValue;
                             return pt;
                         }
-                        return pt;
 
         case '*':       fprintf(outFile, "MUL\t");
                         pt = ex(p->opr.op[0],0);
                         pt2 = ex(p->opr.op[1],0);
                         if(pt && pt2 && (pt->type != pt2->type)) yyerror("Error: type mismatch of the two MUL operands");
                         fprintf(outFile, "%s\n", varName);
-                        return pt;
+                        if ((pt->type == typeString || pt->type == typeChar)
+                        ||
+                            (pt2->type == typeString || pt2->type == typeChar)
+                        ){
+                            yyerror("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = pt->fValue * pt2->fValue;
+                            return pt;
+                        }
 
         case '/':       fprintf(outFile, "DIV\t");
                         pt = ex(p->opr.op[0],0);
                         pt2 = ex(p->opr.op[1],0);
                         if(pt && pt2 && (pt->type != pt2->type)) yyerror("Error: type mismatch of the two DIV operands");
                         fprintf(outFile, "%s\n", varName);
-                        return pt;
-
+                        if ((pt->type == typeString || pt->type == typeChar)
+                        ||
+                            (pt2->type == typeString || pt2->type == typeChar)
+                        ){
+                            yyerror("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = pt->fValue / pt2->fValue;
+                            return pt;
+                        }
 
         case '%':       fprintf(outFile, "MOD\t");
                         pt = ex(p->opr.op[0],0);
                         pt2 = ex(p->opr.op[1],0);
                         if(pt && pt2 && (pt->type != pt2->type)) yyerror("Error: type mismatch of the two MOD operands");
                         fprintf(outFile, "%s\n", varName);
-                        return pt;
+                        if ((pt->type == typeString || pt->type == typeChar)
+                        ||
+                            (pt2->type == typeString || pt2->type == typeChar)
+                        ){
+                            yyerror("Error: can't perform this operation on strings or char");
+                            return NULL;
+                        }else{
+                            pt->fValue = (int)(pt->fValue) % (int)(pt2->fValue);
+                            return pt;
+                        }
                         
         case AND:       //pt->fValue = ex(p->opr.op[0],0->fValue && ex(p->opr.op[1],0->fValue; return pt;
                         fprintf(outFile, "AND\t");
@@ -217,6 +241,11 @@ struct conNodeType* ex(nodeType *p, int oper) {
                         pt2 = ex(p->opr.op[1],0);
                         if(pt && pt2 && pt->type != pt2->type) yyerror("Error: type mismatch of the two AND operands");
                         fprintf(outFile, "%s\n", varName);
+                        if (pt->type == typeString && pt2->type == typeString)
+                            pt->fValue = pt->sValue && pt2->sValue;
+                        else
+                            pt->fValue = pt->fValue && pt2->fValue;
+
                         return pt;
 
         case OR:        //pt->fValue = ex(p->opr.op[0],0->fValue || ex(p->opr.op[1],0->fValue; return pt;
@@ -225,13 +254,20 @@ struct conNodeType* ex(nodeType *p, int oper) {
                         pt2 = ex(p->opr.op[1],0);
                         if(pt && pt2 && pt->type != pt2->type) yyerror("Error: type mismatch of the two OR operands");
                         fprintf(outFile, "%s\n", varName);
+                        if (pt->type == typeString && pt2->type == typeString)
+                            pt->fValue = pt->sValue && pt2->sValue;
+                        else
+                            pt->fValue = pt->fValue && pt2->fValue;
+
                         return pt;
+
         case '!':       //pt->fValue = !ex(p->opr.op[0],0->fValue; return pt;
                         fprintf(outFile, "NOT\t");
                         pt = ex(p->opr.op[0], 0);
                         fprintf(outFile, "%s\n", varName);
+                        pt->fValue = !pt->fValue;
                         return pt;
-                        
+
         case '<':     //pt->fValue = ex(p->opr.op[0],0->fValue < ex(p->opr.op[1],0->fValue; return pt;
                         fprintf(outFile, "\nCMPL\t");
                         ex(p->opr.op[0],0);

@@ -85,8 +85,30 @@ conNodeType* insert(char* varName, conEnum lType, conNodeType value, bool consta
         case typeChar: cout << (char)val.second.first.fValue; break;
         default: cout << val.second.first.fValue; break;
       }
-      cout  << "\t type: " << val.second.first.type << "\t intitialized: " << val.second.second.second << "\t constant: " << val.second.second.first << endl;
-    }
 
+      cout  << "\t type: ";
+      switch(val.second.first.type){
+        case typeBool:  cout<<"bool"; break;
+        case typeInt:  cout<<"int"; break;
+        case typeFloat:  cout<<"float"; break;
+        case typeString:  cout<<"string"; break;
+        case typeChar:  cout<<"char"; break;
+      }
+      
+      cout << "\t ";
+      if (val.second.second.second){
+        cout<<"initialized";
+      }else{
+        cout<<"not initialized yet";
+      }
+
+      cout<<"\t ";
+      if (val.second.second.first){
+        cout<<"constant";
+      }else{
+        cout<<"non-constant";
+      }
+      cout<< endl;
+    }
     cout << "\n\n===========================================\n\n";
   }

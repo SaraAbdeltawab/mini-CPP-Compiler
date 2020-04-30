@@ -273,7 +273,7 @@ void yyerror(char *s) {
 int main(int argc, char* argv[]) { 
 
     if(argc != 3){
-        printf("Wrong Arguments, Usage prog.exe  inputfile  Errorfile\n");
+        printf("Wrong Arguments, Usage prog.exe  inputfile  errorfile\n");
         exit(0);
     }
 
@@ -285,7 +285,7 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
     if((outputFile = fopen(argv[2], "w")) == NULL){
-        printf("Error reading input file\n");
+        printf("Error reading error file\n");
         exit(0);
     }
 
