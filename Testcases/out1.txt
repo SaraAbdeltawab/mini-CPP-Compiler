@@ -2,7 +2,7 @@ MOV	a	1
 MOV	b	3	
 MOV	c	22.100000	
 MOV	d	'x'	
-MOV	name	"Habhob"	
+MOV	name1	"Habhob"	
 MOV	flag	1	
 ADD	a	b	var1
 
@@ -20,9 +20,8 @@ CMPE	var1	var2
 JZ	L003
 MOV	a	5	
 L003:
+
 JMP	L001
-
-
 L002:
 MOV	i	0	
 L004:

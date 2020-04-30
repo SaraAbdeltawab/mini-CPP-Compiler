@@ -139,7 +139,7 @@ struct conNodeType* ex(nodeType *p, int oper) {
                                     pt = ex(p->opr.op[3], '=');
                                     fprintf(outFile, "\n");
                                     if(pt){
-                                        pt = insert(p->opr.op[2]->id.name, type, *pt, 1, 1, &error);
+                                        pt2 = insert(p->opr.op[2]->id.name, type, *pt, 1, 1, &error);
                                         if(pt2) *pt = *pt2;
                                     } 
                                     if (error != ""){                                     

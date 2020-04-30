@@ -25,6 +25,6 @@ repeat{
 switch(store){
 	case 3:{print 3; break;}
 	case 2:{print 2; break;}
-	default:{print1;}
+	default:{print 1;}
 }
 	

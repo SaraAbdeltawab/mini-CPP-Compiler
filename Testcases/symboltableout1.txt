@@ -1,22 +1,22 @@
-flag     val: 1  type: 5         intitialized: 1         constant: 0
-a        val: 1  type: 1         intitialized: 1         constant: 0
-name     val: Habhob     type: 3         intitialized: 1         constant: 0
-d        val: x  type: 4         intitialized: 1         constant: 0
-b        val: 3  type: 1         intitialized: 1         constant: 1
-c        val: 22.1       type: 2         intitialized: 1         constant: 0
+flag     val: 1         type: bool      initialized     non-constant
+b        val: 3         type: int       initialized     constant
+a        val: 1         type: int       initialized     non-constant
+c        val: 22.1      type: float     initialized     non-constant
+d        val: x         type: char      initialized     non-constant
+name1    val: Habhob    type: string    initialized     non-constant
 
 
 ===========================================
 
-var2     val: -2         type: 1         intitialized: 1         constant: 0
-var1     val: 4  type: 1         intitialized: 1         constant: 0
-flag     val: 1  type: 5         intitialized: 1         constant: 0
-var3     val: 21         type: 2         intitialized: 1         constant: 0
-a        val: 1  type: 1         intitialized: 1         constant: 0
-name     val: Habhob     type: 3         intitialized: 1         constant: 0
-d        val: x  type: 4         intitialized: 1         constant: 0
-b        val: 3  type: 1         intitialized: 1         constant: 1
-c        val: 22.1       type: 2         intitialized: 1         constant: 0
+var3     val: 21        type: float     initialized     non-constant
+var1     val: 4         type: int       initialized     non-constant
+flag     val: 1         type: bool      initialized     non-constant
+b        val: 3         type: int       initialized     constant
+a        val: 1         type: int       initialized     non-constant
+var2     val: -2        type: int       initialized     non-constant
+c        val: 22.1      type: float     initialized     non-constant
+d        val: x         type: char      initialized     non-constant
+name1    val: Habhob    type: string    initialized     non-constant
 
 
 ===========================================

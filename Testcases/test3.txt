@@ -1,7 +1,7 @@
 int i = 6;
 i = x + 1;
 
-float z = 1.2;
+char z = 'c';
 i = z;
 
 int j;
