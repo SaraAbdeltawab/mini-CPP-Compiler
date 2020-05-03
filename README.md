@@ -1,5 +1,5 @@
 # Programming-Language-using-Lex-and-Yacc
-Design and implementation of a simple programming language using the Lex and Yacc compiler generating package.
+Design and implementation of c/c++ compiler using the Lex and Yacc compiler generating package.
 <h2>To Run assembler version Steps:</h2>
 <ul>
 <li type="1">bison --yacc parser.y -d</li>
